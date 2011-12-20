@@ -36,6 +36,11 @@ public class WordBucket implements Iterable<Word> {
 		next = null; 
 	}
 
+	public WordBucket(Word w, WordBucket wb) {
+		this.w = w;
+		this.next = wb;  
+	}
+
 	public Iterator<Word> iterator() {
 		return new WordIter(this); 
 

@@ -1,6 +1,8 @@
 package capps.scrabble; 
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import static capps.scrabble.ScrabbleConstants.*; 
@@ -41,12 +43,22 @@ public class Main {
 			System.exit(1); 
 		}
 
-		o.println("Loading scrabble dictionary from \"" + args[0] + "\""); 
 
 		Word w1 = new Word("abcdef"); 
 		Word w2 = new Word("fdceba"); 
 
 		o.println("\"abcdef\" is anagram of \"fdcebd\"? " + w1.isAnagram(w2.toString())); 
+
+		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
+		try {
+			dict = new ScrabbleDict(dictFile); 
+			BufferedWriter testDict = new BufferedWriter(new FileWriter("data/testDict.txt")); 
+			dict.dumpDict(testDict);
+		}
+		catch (IOException e) {
+			e.printStackTrace(); 
+			System.exit(1); 
+		}
 	}
 
 }

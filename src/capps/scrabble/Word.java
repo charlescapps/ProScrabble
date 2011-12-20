@@ -10,11 +10,34 @@ public class Word {
 
 	public Word(String w) {
 		txt = w; 
+		prefixes = new ArrayList<Word>(); 
+		suffixes = new ArrayList<Word>(); 
 	}
 
-	public String getTxt() {return txt; }
+	public ArrayList<Word> getPrefixes() {
+		return prefixes; 
+	}
+
+	public ArrayList<Word> getSuffixes() {
+		return suffixes; 
+	}
 
 	public String toString() {return txt; }
+
+	public String toLongString() {
+		StringBuffer sb = new StringBuffer(); 
+		sb.append(txt); 
+		sb.append(" prefixes: "); 
+		for (Word w: prefixes) {
+			sb.append(w.toString() + " "); 
+		}
+		sb.append(" suffixes: "); 
+		for (Word w: suffixes) {
+			sb.append(w.toString() + " "); 
+		}
+
+		return sb.toString(); 
+	}
 
 	public void addPrefix(Word p) {
 		prefixes.add(p); 
