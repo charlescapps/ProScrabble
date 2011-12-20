@@ -32,6 +32,7 @@ public class Main {
 		}
 
 		try {
+			o.println("Loading scrabble layout from \"" + args[0] + "\""); 
 			sBoard = new ScrabbleBoard(layoutFile); 
 		}
 		catch (IOException e) {
@@ -40,7 +41,12 @@ public class Main {
 			System.exit(1); 
 		}
 
-		o.println(sBoard); 
+		o.println("Loading scrabble dictionary from \"" + args[0] + "\""); 
+
+		Word w1 = new Word("abcdef"); 
+		Word w2 = new Word("fdceba"); 
+
+		o.println("\"abcdef\" is anagram of \"fdcebd\"? " + w1.isAnagram(w2.toString())); 
 	}
 
 }
