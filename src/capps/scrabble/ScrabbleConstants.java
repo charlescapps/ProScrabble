@@ -4,6 +4,8 @@ import java.io.PrintStream;
 
 public class ScrabbleConstants {
 
+	public static enum DIR {S, E}; 
+
 	public static final char BLANK = ' ';
 	public static final char EMPTY = '_'; 
 	public static final char WILDCARD = '*'; 
@@ -17,6 +19,33 @@ public class ScrabbleConstants {
 	public static final String NL = System.getProperty("line.separator"); 
 
 	public static final PrintStream o = System.out; //Come on, no one wants to type System.out 1,000,000 times
+
+	//O(n^2) behaviour, don't think this can be beat unless we had letters ordered??!
+	public static boolean areAnagrams(String s1, String s2) {
+		int len1 = s1.length(), len2 = s2.length(); 
+		if (len1 != len2) {
+			return false; 
+		}
+		
+		boolean marked[] = new boolean[len1]; 
+
+		for (int i = 0; i < len1; i++) {
+			if (!markNext(marked, s1.charAt(i), s2))
+				return false; 
+		}
+
+		return true; 
+	}
+
+	private static boolean markNext(boolean[] marked, char c, String s) {
+		for (int i = 0; i < marked.length; i++) {
+			if (!marked[i] && s.charAt(i) == c) {
+				marked[i] = true; 
+				return true; 
+			}
+		}
+		return false; 
+	}
 
 	//Could have used a HashMap, but this is probably faster, and this way it can be a static function
 	public static final int tileVal(char t) {

@@ -17,48 +17,42 @@ public class Main {
 	private static ScrabbleBoard sBoard; 
 	private static ScrabbleDict dict; 
 
-	public static void main (String [] args)
+	public static void main (String [] args) throws FileNotFoundException, IOException
 	{
 		if (args.length != 2) {
 			o.println(USAGE); 
 			System.exit(1); 
 		}
 
-		try {
-			layoutFile = new BufferedReader(new FileReader(args[0])); 
-			dictFile = new BufferedReader(new FileReader(args[1])); 
-		}
-		catch (FileNotFoundException e) {
-			o.println("Invalid file names given."); 
-			System.exit(1); 
-		}
+		layoutFile = new BufferedReader(new FileReader(args[0])); 
+		dictFile = new BufferedReader(new FileReader(args[1])); 
 
-		try {
-			o.println("Loading scrabble layout from \"" + args[0] + "\""); 
-			sBoard = new ScrabbleBoard(layoutFile); 
-		}
-		catch (IOException e) {
-			o.println("Error parsing \"" + args[0] + "\""); 
-			e.printStackTrace(); 
-			System.exit(1); 
-		}
-
-
-		Word w1 = new Word("abcdef"); 
-		Word w2 = new Word("fdceba"); 
-
-		o.println("\"abcdef\" is anagram of \"fdcebd\"? " + w1.isAnagram(w2.toString())); 
+		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
+		sBoard = new ScrabbleBoard(layoutFile); 
 
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
-		try {
-			dict = new ScrabbleDict(dictFile); 
-			BufferedWriter testDict = new BufferedWriter(new FileWriter("data/testDict.txt")); 
-			dict.dumpDict(testDict);
-		}
-		catch (IOException e) {
-			e.printStackTrace(); 
-			System.exit(1); 
-		}
+		dict = new ScrabbleDict(dictFile);
+		//Dump the complete hash table to file for testing purposes.
+		//BufferedWriter testDict = new BufferedWriter(new FileWriter("data/testDict.txt")); 
+		//dict.dumpDict(testDict);
+		
+		testMove(); 
 	}
 
+	public static void testMove() {
+		ScrabbleMove t1 = new ScrabbleMove(7, 7, "HATES", "HATES", DIR.S); 
+		int score = sBoard.makeMove(t1); 
+		o.println("Score: " + score); 
+		o.println(sBoard); 
+
+		ScrabbleMove t2 = new ScrabbleMove(9, 7, "TEA", "TEA", DIR.E); 
+		score = sBoard.makeMove(t2); 
+		o.println("Score: " + score); 
+		o.println(sBoard); 
+
+		ScrabbleMove t3 = new ScrabbleMove(6, 8, "BA", "BA", DIR.S); 
+		score = sBoard.makeMove(t3); 
+		o.println("Score: " + score); 
+		o.println(sBoard); 
+	}
 }
