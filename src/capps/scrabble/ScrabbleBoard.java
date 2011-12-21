@@ -9,8 +9,11 @@ public class ScrabbleBoard{
 
 
 	private Square[][] sBoard; 
+	private ScrabbleDict dict; 
 
-	public ScrabbleBoard(BufferedReader layoutFile) throws IOException{
+	public ScrabbleBoard(BufferedReader layoutFile, ScrabbleDict dict) throws IOException{
+
+		this.dict = dict; 
 
 		//Strings in the text file giving the board layout
 		final String doubleLett = "DL"; 
@@ -201,6 +204,46 @@ public class ScrabbleBoard{
 		}
 
 		return sb.toString(); 
+	}
+
+	public boolean isValidMove(ScrabbleMove m) {
+		if (!dict.inDict(m.play)) //must be a real word.
+			return false; 
+
+		//Must fit on board
+		if (m.row < 0 || m.col < 0)
+			return false; 
+
+		int len = m.play.length(); 
+
+		if (m.dir == DIR.S && (m.row + len > ROWS))
+			return false; 
+
+		if (m.dir == DIR.E && (m.col + len > COLS))
+			return false; 
+
+		int r = m.row, c = m.col; 
+		//Collisions with letters already on board must match up
+		for (int i = 0; i < len; i++) {
+			if (m.dir == DIR.S && sBoard[r + i][c].getLetter() != EMPTY && sBoard[r+i][c].getLetter() != m.play.charAt(i)) {
+				return false; 
+			}
+			else if (m.dir == DIR.E && sBoard[r][c+i].getLetter() != EMPTY && sBoard[r][c+i].getLetter() != m.play.charAt(i)) {
+				return false; 
+			}
+
+			//Perp moves must be in dictionary
+			ScrabbleMove perpMove; 
+			if (m.dir == DIR.S && (perpMove = getImplicitPerpendicularMove(r+i, c, m)) != null && !dict.inDict(perpMove.play)) {
+				return false; 
+			}
+			else if (m.dir == DIR.E && (perpMove = getImplicitPerpendicularMove(r, c+i, m)) != null && !dict.inDict(perpMove.play)) {
+				return false; 
+			}
+		}
+
+		//That about covers all the bases!
+		return true; 
 	}
 
 

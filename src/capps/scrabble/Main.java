@@ -27,30 +27,34 @@ public class Main {
 		layoutFile = new BufferedReader(new FileReader(args[0])); 
 		dictFile = new BufferedReader(new FileReader(args[1])); 
 
-		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
-		sBoard = new ScrabbleBoard(layoutFile); 
-
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
 		dict = new ScrabbleDict(dictFile);
 		//Dump the complete hash table to file for testing purposes.
 		//BufferedWriter testDict = new BufferedWriter(new FileWriter("data/testDict.txt")); 
 		//dict.dumpDict(testDict);
+
+		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
+		sBoard = new ScrabbleBoard(layoutFile, dict); 
+
 		
 		testMove(); 
 	}
 
 	public static void testMove() {
 		ScrabbleMove t1 = new ScrabbleMove(7, 7, "HATES", "HATES", DIR.S); 
+		o.println("Is valid move? " + sBoard.isValidMove(t1)); 
 		int score = sBoard.makeMove(t1); 
 		o.println("Score: " + score); 
 		o.println(sBoard); 
 
 		ScrabbleMove t2 = new ScrabbleMove(9, 7, "TEA", "TEA", DIR.E); 
+		o.println("Is valid move? " + sBoard.isValidMove(t2)); 
 		score = sBoard.makeMove(t2); 
 		o.println("Score: " + score); 
 		o.println(sBoard); 
 
 		ScrabbleMove t3 = new ScrabbleMove(6, 8, "BA", "BA", DIR.S); 
+		o.println("Is valid move? " + sBoard.isValidMove(t3)); 
 		score = sBoard.makeMove(t3); 
 		o.println("Score: " + score); 
 		o.println(sBoard); 
