@@ -17,7 +17,8 @@ public class Main {
 	private static ScrabbleBoard sBoard; 
 	private static ScrabbleDict dict; 
 
-	public static void main (String [] args) throws FileNotFoundException, IOException
+	public static void main (String [] args) 
+		throws FileNotFoundException, IOException, ScrabbleException
 	{
 		if (args.length != 2) {
 			o.println(USAGE); 
@@ -30,14 +31,15 @@ public class Main {
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
 		dict = new ScrabbleDict(dictFile);
 		//Dump the complete hash table to file for testing purposes.
-		//BufferedWriter testDict = new BufferedWriter(new FileWriter("data/testDict.txt")); 
-		//dict.dumpDict(testDict);
+		BufferedWriter testDict = new BufferedWriter(new FileWriter("data/testDict.txt")); 
+		dict.dumpDict(testDict);
 
 		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
 		sBoard = new ScrabbleBoard(layoutFile, dict); 
 
 		
 		testMove(); 
+		testBestScores(); 
 	}
 
 	public static void testMove() {
@@ -59,7 +61,7 @@ public class Main {
 		o.println("Score: " + score); 
 		o.println(sBoard); 
 
-		ScrabbleMove t4 = new ScrabbleMove(1, 2, "LABORATORY", "BA", DIR.S); 
+		ScrabbleMove t4 = new ScrabbleMove(1, 2, "LABORATORY", "LABORATORY", DIR.S); 
 		o.println("Is valid move? " + sBoard.isValidMove(t4)); 
 		score = sBoard.makeMove(t4); 
 		o.println("Score: " + score); 
@@ -71,16 +73,33 @@ public class Main {
 		o.println("Score: " + score); 
 		o.println(sBoard); 
 
-		ScrabbleMove t6 = new ScrabbleMove(6, 8, "BATE", "LIT", DIR.S); 
+		ScrabbleMove t6 = new ScrabbleMove(6, 8, "BATE", "BATE", DIR.S); 
 		o.println("Is valid move? " + sBoard.isValidMove(t6)); 
 		score = sBoard.makeMove(t6); 
 		o.println("Score: " + score); 
 		o.println(sBoard); 
 
-		ScrabbleMove t7 = new ScrabbleMove(1, 1, "ELITE", "LIT", DIR.E); 
+		ScrabbleMove t7 = new ScrabbleMove(1, 1, "ELITE", "ELITE", DIR.E); 
 		o.println("Is valid move? " + sBoard.isValidMove(t7)); 
 		score = sBoard.makeMove(t7); 
 		o.println("Score: " + score); 
 		o.println(sBoard); 
+	}
+
+	public static void testBestScores() throws ScrabbleException {
+		AIPlayer p1 = new AIPlayer("AAAAAAA",dict); 
+
+		MoveScore best = p1.getBestMove(sBoard); 
+
+		if (best == null) {
+			o.println("NO MOVE FOUND!"); 
+		}
+		else {
+			o.println("Best Score:" + best.score); 
+			o.println("Best Move:"); 
+			o.println(best.move); 
+		}
+		
+
 	}
 }

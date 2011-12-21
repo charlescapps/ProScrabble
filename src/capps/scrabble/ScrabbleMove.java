@@ -11,9 +11,9 @@ public class ScrabbleMove {
 	final public String tilesUsed; 
 	final public DIR dir; 
 
-	public ScrabbleMove(int r, int c, String word, String tiles, DIR d) {
+	public ScrabbleMove(int r, int c, String word, String tilesUsed, DIR d) {
 		row = r; col = c; 
-		play = word; tilesUsed = tiles; 
+		play = word; this.tilesUsed = tilesUsed; 
 		dir = d; 
 	}
 

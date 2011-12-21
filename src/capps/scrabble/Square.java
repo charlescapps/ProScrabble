@@ -2,7 +2,7 @@ package capps.scrabble;
 
 import static capps.scrabble.ScrabbleConstants.*; 
 
-public class Square {
+public class Square implements Cloneable{
 
 	public final int letterMult; 
 	public final int wordMult; 
@@ -35,4 +35,16 @@ public class Square {
 		return isBlank; 
 	}
 
+	public void setIsBlank(boolean b) {
+		this.isBlank = b; 
+	}
+
+	@Override
+	public Object clone() {
+		Square aClone = new Square(letterMult,wordMult); 
+		aClone.setLetter(letter); 
+		aClone.setIsBlank(isBlank); 
+
+		return aClone; 
+	}
 }

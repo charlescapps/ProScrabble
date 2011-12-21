@@ -51,13 +51,12 @@ public class ScrabbleDict {
 			for (Word s: w.getSuffixes()) {
 				Word base; 
 				if( (base = exactMatch(s.toString().substring(w.toString().length()))) != null  ){
-					base.addPrefix(w); 
+					base.addPrefix(s); 
 				}
 			}
 		}
 
 	}
-
 
 	//Testing to verify it worked
 	public void dumpDict(BufferedWriter bw) throws IOException {
@@ -113,7 +112,6 @@ public class ScrabbleDict {
 		return hashDict[hash(s)]; 
 	}
 
-
 	public static int hash(String w) {
 		String W = w.toUpperCase();
 		int len = W.length(), hashVal = 0; 
@@ -126,7 +124,5 @@ public class ScrabbleDict {
 
 		return hashVal; 
 	}
-
-
 
 }

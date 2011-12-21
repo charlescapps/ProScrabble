@@ -57,20 +57,17 @@ public class ScrabbleBoard{
 
 	//Returns point value of move
 	public int makeMove(ScrabbleMove m) {
-		String tilesPlayed = "";
 		int r = m.row, c = m.col, score = computeScore(m); 
 
 		for (int i = 0; i < m.play.length(); i++) {
 			if (m.dir == DIR.S) {
 				if (sBoard[r+i][c].getLetter()==EMPTY) {
 					sBoard[r+i][c].setLetter(m.play.charAt(i)); 
-					tilesPlayed += m.play.charAt(i); 
 				}
 			}
 			else {
 				if (sBoard[r][c+i].getLetter()==EMPTY) {
 					sBoard[r][c+i].setLetter(m.play.charAt(i)); 
-					tilesPlayed += m.play.charAt(i); 
 				}
 			}
 		}
@@ -104,6 +101,8 @@ public class ScrabbleBoard{
 				i++;
 			}
 		}
+		if (m.tilesUsed.length() == 7)
+			cumulativeScore += 50; 
 		return cumulativeScore; 
 	}
 
@@ -214,10 +213,25 @@ public class ScrabbleBoard{
 		return sb.toString(); 
 	}
 
-	public boolean isValidMove(ScrabbleMove m) {
-		if (m.tilesUsed.length() > 7) 
-			return false; 
+	public static String toString(Square[][] board) {
+		StringBuffer sb = new StringBuffer(); 
 
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLS; j++) {
+				sb.append(board[i][j].getLetter()); 
+				sb.append(' '); 
+			}
+			sb.append(NL); 
+		}
+
+		return sb.toString(); 
+
+	}
+
+	public boolean isValidMove(ScrabbleMove m) {
+		/*if (m.tilesUsed.length() > 7) 
+			return false; 
+		*/
 		int len = m.play.length(); 
 
 		if (len > 7 || len < 2)
@@ -292,5 +306,14 @@ public class ScrabbleBoard{
 		return nextToSomething; 
 	}
 
+	public Square[][] getBoardCopy() {
+		Square[][] copy = new Square[ROWS][COLS]; 
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLS; j++) {
+				copy[i][j] = (Square) sBoard[i][j].clone(); 
+			}
+		}
+		return copy; 
+	}
 
 }
