@@ -85,16 +85,23 @@ public class ScrabbleBoard{
 
 		cumulativeScore += oneWordScore(m); 
 
-		for (int i = 0; i < m.play.length(); i++) {
-			if (m.dir == DIR.S) {
+		int i = 0; 
+		//Here: we scan the length of the play + possible suffix. 
+		//No need to consider prefixes--a move by definition starts at the beginning of a played word
+		if (m.dir == DIR.S) {
+			while ((r+i < ROWS) && (i < m.play.length() || sBoard[r+i][c].getLetter() != EMPTY)) {
 				if (sBoard[r+i][c].getLetter() == EMPTY && (perpMove = getImplicitPerpendicularMove(r+i, c, m)) != null) {
 					cumulativeScore += oneWordScore(perpMove); 
 				}
+				i++; 
 			}
-			else {
+		}
+		else {
+			while ( (c+i < COLS) && (i < m.play.length() || sBoard[r][c+i].getLetter() != EMPTY)) {
 				if (sBoard[r][c+i].getLetter() == EMPTY && (perpMove = getImplicitPerpendicularMove(r, c+i, m)) != null) {
 					cumulativeScore += oneWordScore(perpMove); 
 				}
+				i++;
 			}
 		}
 		return cumulativeScore; 
@@ -104,6 +111,7 @@ public class ScrabbleBoard{
 		o.println("Computing score of move:"); 
 		o.println(m); 
 		int r = m.row, c = m.col, score = 0, wordMult = 1; 
+
 
 		for (int i = 0; i < m.play.length(); i++) {
 			if (m.dir == DIR.S) {
@@ -207,6 +215,14 @@ public class ScrabbleBoard{
 	}
 
 	public boolean isValidMove(ScrabbleMove m) {
+		if (m.tilesUsed.length() > 7) 
+			return false; 
+
+		int len = m.play.length(); 
+
+		if (len > 7 || len < 2)
+			return false; 
+
 		if (!dict.inDict(m.play)) //must be a real word.
 			return false; 
 
@@ -214,7 +230,6 @@ public class ScrabbleBoard{
 		if (m.row < 0 || m.col < 0)
 			return false; 
 
-		int len = m.play.length(); 
 
 		if (m.dir == DIR.S && (m.row + len > ROWS))
 			return false; 
@@ -222,7 +237,26 @@ public class ScrabbleBoard{
 		if (m.dir == DIR.E && (m.col + len > COLS))
 			return false; 
 
+		boolean nextToSomething = false; 
 		int r = m.row, c = m.col; 
+
+		if (m.dir == DIR.S) { //Check if it's a prefix/suffix of some word
+			if (c == 7 && r <= 7 && r+len-1 >= 7) //First move case
+				nextToSomething = true;
+			if (sBoard[Math.max(r-1,0)][c].getLetter() != EMPTY
+					|| sBoard[Math.min(r+len,ROWS-1)][c].getLetter() != EMPTY) {
+				nextToSomething = true;
+			}
+		}
+		else if (m.dir == DIR.E) {
+			if (r == 7 && c <= 7 && c+len - 1 >=7)
+				nextToSomething = true; 
+			if (sBoard[r][Math.max(c-1,0)].getLetter() != EMPTY 
+					|| sBoard[r][Math.min(c+len,COLS-1)].getLetter() != EMPTY) {
+				nextToSomething = true;
+			}
+		}
+
 		//Collisions with letters already on board must match up
 		for (int i = 0; i < len; i++) {
 			if (m.dir == DIR.S && sBoard[r + i][c].getLetter() != EMPTY && sBoard[r+i][c].getLetter() != m.play.charAt(i)) {
@@ -240,10 +274,22 @@ public class ScrabbleBoard{
 			else if (m.dir == DIR.E && (perpMove = getImplicitPerpendicularMove(r, c+i, m)) != null && !dict.inDict(perpMove.play)) {
 				return false; 
 			}
+
+			if (m.dir == DIR.S && (sBoard[r+i][c].getLetter() != EMPTY
+									|| sBoard[r+i][Math.max(c-1,0)].getLetter() != EMPTY 
+									|| sBoard[r+i][Math.min(c+1,COLS-1)].getLetter()!=EMPTY)) {
+				nextToSomething = true; 
+			}
+			else if (m.dir == DIR.E && sBoard[r][c+i].getLetter() != EMPTY
+									|| sBoard[Math.max(r-1,0)][c].getLetter() != EMPTY
+									|| sBoard[Math.min(r+1,ROWS-1)][ROWS-1].getLetter() != EMPTY) {
+				nextToSomething = true; 
+			}
 		}
 
 		//That about covers all the bases!
-		return true; 
+		o.println("Next to somethin'? " + nextToSomething); 
+		return nextToSomething; 
 	}
 
 

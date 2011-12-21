@@ -58,5 +58,29 @@ public class Main {
 		score = sBoard.makeMove(t3); 
 		o.println("Score: " + score); 
 		o.println(sBoard); 
+
+		ScrabbleMove t4 = new ScrabbleMove(1, 2, "LABORATORY", "BA", DIR.S); 
+		o.println("Is valid move? " + sBoard.isValidMove(t4)); 
+		score = sBoard.makeMove(t4); 
+		o.println("Score: " + score); 
+		o.println(sBoard); 
+
+		ScrabbleMove t5 = new ScrabbleMove(0, 3, "LIT", "LIT", DIR.S); 
+		o.println("Is valid move? " + sBoard.isValidMove(t5)); 
+		score = sBoard.makeMove(t5); 
+		o.println("Score: " + score); 
+		o.println(sBoard); 
+
+		ScrabbleMove t6 = new ScrabbleMove(6, 8, "BATE", "LIT", DIR.S); 
+		o.println("Is valid move? " + sBoard.isValidMove(t6)); 
+		score = sBoard.makeMove(t6); 
+		o.println("Score: " + score); 
+		o.println(sBoard); 
+
+		ScrabbleMove t7 = new ScrabbleMove(1, 1, "ELITE", "LIT", DIR.E); 
+		o.println("Is valid move? " + sBoard.isValidMove(t7)); 
+		score = sBoard.makeMove(t7); 
+		o.println("Score: " + score); 
+		o.println(sBoard); 
 	}
 }
