@@ -59,10 +59,11 @@ public class ScrabbleDict implements java.io.Serializable {
 
 	//Testing to verify it worked
 	public void dumpDict(BufferedWriter bw) throws IOException {
+		/*
 		for (Word w: lexiDict) {
 			bw.write(w.toString()); 
 			bw.newLine(); 
-		}
+		}*/
 
 		bw.write("HASH TABLE:");
 		bw.newLine(); 
@@ -111,11 +112,25 @@ public class ScrabbleDict implements java.io.Serializable {
 		return hashDict[hash(s)]; 
 	}
 
+	public ArrayList<String> getAnagrams(String s) {
+		WordBucket matches = getMatches(s); 
+		if (matches == null)
+			return null; 
+		ArrayList<String> anagrams = new ArrayList<String>(); 
+
+		for (Word w: matches) {
+			if (w.isAnagram(s))
+				anagrams.add(w.toString()); 
+		}
+
+		return anagrams; 
+	}
+
 	public static int hash(String w) {
 		String W = w.toUpperCase();
 		int len = W.length(), hashVal = 0; 
 
-		for (int i = 0; i < W.length(); i++) {
+		for (int i = 0; i < len; i++) {
 			int letterNum = W.charAt(i) - 'A'; 	
 			int bit = 1 << letterNum; 
 			hashVal |= bit; 

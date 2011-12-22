@@ -15,7 +15,7 @@ public class Main {
 	private final static String USAGE 
 		= "java -jar scrabble.jar \"layout_file\" \"dict_object_file\""; 
 
-	private static BufferedReader layoutFile, dictFile; 
+	private static BufferedReader layoutFile; 
 
 	private static ScrabbleBoard sBoard; 
 	private static ScrabbleDict dict; 
@@ -36,13 +36,9 @@ public class Main {
 
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
 		dict = (ScrabbleDict) ois.readObject();
-		//Dump the complete hash table to file for testing purposes.
-		BufferedWriter testDict = new BufferedWriter(new FileWriter("data/testDict.txt")); 
-		dict.dumpDict(testDict);
 
 		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
 		sBoard = new ScrabbleBoard(layoutFile, dict); 
-
 		
 		testMove(); 
 		testBestScores(); 
@@ -104,8 +100,22 @@ public class Main {
 			o.println("Best Score:" + best.score); 
 			o.println("Best Move:"); 
 			o.println(best.move); 
+			p1.playMove(sBoard,best.move); 
+			o.println(sBoard); 
 		}
-		
+		AIPlayer p2 = new AIPlayer("ZPAAAAA",dict); 
 
+		best = p2.getBestMove(sBoard); 
+
+		if (best == null) {
+			o.println("NO MOVE FOUND!"); 
+		}
+		else {
+			o.println("Best Score:" + best.score); 
+			o.println("Best Move:"); 
+			o.println(best.move); 
+			p2.playMove(sBoard,best.move); 
+			o.println(sBoard); 
+		}
 	}
 }

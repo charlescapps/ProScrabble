@@ -107,8 +107,8 @@ public class ScrabbleBoard{
 	}
 
 	public int oneWordScore(ScrabbleMove m) {
-		o.println("Computing score of move:"); 
-		o.println(m); 
+		//o.println("Computing score of move:"); 
+		//o.println(m); 
 		int r = m.row, c = m.col, score = 0, wordMult = 1; 
 
 
@@ -302,7 +302,7 @@ public class ScrabbleBoard{
 		}
 
 		//That about covers all the bases!
-		o.println("Next to somethin'? " + nextToSomething); 
+		//o.println("Next to somethin'? " + nextToSomething); 
 		return nextToSomething; 
 	}
 
