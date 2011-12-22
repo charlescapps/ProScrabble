@@ -62,99 +62,118 @@ public class AIPlayer {
 		//Looking if we're at start of a word
 		//SOUTH case:
 		DIR d = DIR.S; 
-		String base; 
-		if ((base = getWordStartingHere(b,r,c,d)) != null) {
-			o.println("Base word: " + base); 
-			Word w = dict.exactMatch(base); 
-			if (w == null) {
-				o.println("Invalid word on board at (" + r+","+c+")"); 
-			}
-			else {
-				for (Word p: w.getPrefixes()) { //Check if prefixes work
-					//o.println("\tPrefix found: " + p); 
-					int delta = p.toString().length() - base.length(); 
-					if (r - delta < 0)
-						continue;
+		if (!searchedS[r][c]) {
+			String base; 
+			if ((base = getWordStartingHere(b,r,c,d)) != null) {
+				o.println("Base word: " + base); 
+				Word w = dict.exactMatch(base); 
+				if (w == null) {
+					o.println("Invalid word on board at (" + r+","+c+")"); 
+				}
+				else {
+					for (Word p: w.getPrefixes()) { //Check if prefixes work
+						//o.println("\tPrefix found: " + p); 
+						int delta = p.toString().length() - base.length(); 
+						if (r - delta < 0)
+							continue;
 
-					StringBuffer tilesNeeded = new StringBuffer(); 
+						StringBuffer tilesNeeded = new StringBuffer(); 
 
-					for (int i = 0; i < delta; i++) {
-						if (b[r-delta+i][c].getLetter() == EMPTY)
-							tilesNeeded.append(p.toString().charAt(i)); 
-					}
-					
-					if (!rack.hasTiles(tilesNeeded.toString())){
-						//o.println("Doesn't have tiles needed"); 
-						continue; 
-					}
+						for (int i = 0; i < delta; i++) {
+							if (b[r-delta+i][c].getLetter() == EMPTY)
+								tilesNeeded.append(p.toString().charAt(i)); 
+						}
+						
+						if (!rack.hasTiles(tilesNeeded.toString())){
+							//o.println("Doesn't have tiles needed"); 
+							continue; 
+						}
 
-					ScrabbleMove tryMove = 
-						new ScrabbleMove(r-delta,c,p.toString(),
-								tilesNeeded.toString(), d); 
+						ScrabbleMove tryMove = 
+							new ScrabbleMove(r-delta,c,p.toString(),
+									tilesNeeded.toString(), d); 
 
-					if (sb.isValidMove(tryMove)) {
-						int tmp = sb.computeScore(tryMove); 
-						if (tmp > bestScoreSoFar) {
-							bestScoreSoFar = tmp; 
-							bestMove = tryMove; 
+						if (sb.isValidMove(tryMove)) {
+							int tmp = sb.computeScore(tryMove); 
+							if (tmp > bestScoreSoFar) {
+								bestScoreSoFar = tmp; 
+								bestMove = tryMove; 
+							//	o.println("New best move from prefix at (" + r + "," + c + ")\n" + bestMove); 
+							}
 						}
 					}
 				}
-			}
-		}
-		//Perp word case going SOUTH, i.e. we're in the middle of a word
-		else {
-			//NEED helper function to get all possible perp words that fit on
-			//board and match up with existing tiles
-			ArrayList<ScrabbleMove> perpMoves = getPerpMoves
-				(sb,b,r,c,DIR.S); 
-			for (ScrabbleMove m: perpMoves) {
-				int score = sb.computeScore(m); 
-				if (bestMove == null || bestScoreSoFar < score) {
-					bestMove = m; 
-					bestScoreSoFar = score; 
+				for (int r1 = r; ;r1++) {
+					if (r1 >= ROWS || b[r1][c].getLetter() == EMPTY)
+						break; 
+					searchedS[r1][c] = true; 
 				}
+			}
+			//Perp word case going SOUTH, i.e. we're in the middle of a word
+			else {
+				//NEED helper function to get all possible perp words that fit on
+				//board and match up with existing tiles
+				ArrayList<ScrabbleMove> perpMoves = getPerpMoves
+					(sb,b,r,c,DIR.S); 
+				for (ScrabbleMove m: perpMoves) {
+					int score = sb.computeScore(m); 
+					if (bestMove == null || bestScoreSoFar < score) {
+						bestMove = m; 
+						bestScoreSoFar = score; 
+						//o.println("New best move from perpMoves at (" + r + "," + c + ")\n" + bestMove); 
+					}
 
+				}
 			}
 		}
-		//EAST case:
-		d = DIR.E; 
-		if ((base = getWordStartingHere(b,r,c,d)) != null) {
-			o.println("Base word: " + base); 
-			Word w = dict.exactMatch(base); 
-			if (w == null) {
-				o.println("Invalid word on board at (" + r+","+c+")"); 
-			}
-			else {
-				for (Word p: w.getPrefixes()) { //Check if prefixes work
-					//o.println("\tPrefix found: " + p); 
-					int delta = p.toString().length() - base.length(); 
-					if (c - delta < 0)
-						continue;
 
-					StringBuffer tilesNeeded = new StringBuffer(); 
+		if (!searchedE[r][c]) {
+			//EAST case:
+			d = DIR.E; 
+			String base; 
+			if ((base = getWordStartingHere(b,r,c,d)) != null) {
+				o.println("Base word: " + base); 
+				Word w = dict.exactMatch(base); 
+				if (w == null) {
+					o.println("Invalid word on board at (" + r+","+c+")"); 
+				}
+				else {
+					for (Word p: w.getPrefixes()) { //Check if prefixes work
+						//o.println("\tPrefix found: " + p); 
+						int delta = p.toString().length() - base.length(); 
+						if (c - delta < 0)
+							continue;
 
-					for (int i = 0; i < delta; i++) {
-						if (b[r][c-delta+i].getLetter() == EMPTY)
-							tilesNeeded.append(p.toString().charAt(i)); 
-					}
-					
-					if (!rack.hasTiles(tilesNeeded.toString())){
-						//o.println("Doesn't have tiles needed"); 
-						continue; 
-					}
+						StringBuffer tilesNeeded = new StringBuffer(); 
 
-					ScrabbleMove tryMove = 
-						new ScrabbleMove(r-delta,c,p.toString(),
-								tilesNeeded.toString(), d); 
+						for (int i = 0; i < delta; i++) {
+							if (b[r][c-delta+i].getLetter() == EMPTY)
+								tilesNeeded.append(p.toString().charAt(i)); 
+						}
+						
+						if (!rack.hasTiles(tilesNeeded.toString())){
+							//o.println("Doesn't have tiles needed"); 
+							continue; 
+						}
 
-					if (sb.isValidMove(tryMove)) {
-						int tmp = sb.computeScore(tryMove); 
-						if (tmp > bestScoreSoFar) {
-							bestScoreSoFar = tmp; 
-							bestMove = tryMove; 
+						ScrabbleMove tryMove = 
+							new ScrabbleMove(r,c-delta,p.toString(),
+									tilesNeeded.toString(), d); 
+
+						if (sb.isValidMove(tryMove)) {
+							int tmp = sb.computeScore(tryMove); 
+							if (tmp > bestScoreSoFar) {
+								bestScoreSoFar = tmp; 
+								bestMove = tryMove; 
+						//		o.println("New best move from east prefix at (" + r + "," + c + ")\n" + bestMove); 
+							}
 						}
 					}
+				}
+				for (int c1 = c; ;c1++) {
+					if (c1 >= COLS || b[r][c1].getLetter() == EMPTY)
+						break; 
+					searchedE[r][c1] = true; 
 				}
 			}
 		}
@@ -226,6 +245,58 @@ public class AIPlayer {
 					}
 				}
 			}
+		}
+		else {
+
+			for (int i = 0; c - i >= 0; i++) {
+				for (int j = 0; c + j < COLS; j++) {
+					int numTilesReq = 0; 
+
+					for (int c1 = c-i; c1 <= c+j; c1++) {
+						if (squares[r][c1].getLetter()==EMPTY)
+							numTilesReq++; 
+					}
+
+					if (numTilesReq == 0 || numTilesReq > numTiles)
+						break; 
+
+					ArrayList<String> substr = getSubstringsOfRack(numTilesReq); 
+					for (String rackStr: substr) {
+						assert(rackStr.length() == numTilesReq); 
+						StringBuffer buildCandStr = new StringBuffer(); 
+						int rackI = 0; 
+						for (int c1 = c-i; c1 <= c+j; c1++) {
+							if (squares[r][c1].getLetter()==EMPTY)
+								buildCandStr.append(rackStr.charAt(rackI++));
+							else
+								buildCandStr.append(squares[r][c1].getLetter());
+						}
+						String cand = buildCandStr.toString(); 
+						ArrayList<String> matches = dict.getAnagrams(cand); 
+						if (matches == null) 
+							continue; 
+
+						//For each possible match, check if it lines up with board
+						boolean linesUp = false; 
+						for (String m: matches) {
+							linesUp = true; 
+							for (int c1 = c-i; c1 <= c+j; c1++) {
+								if (squares[r][c1].getLetter() != EMPTY
+										&& squares[r][c1].getLetter() != m.charAt(c1-(c-i))) {
+									linesUp = false;
+									break;
+								}
+							}
+							if (!linesUp)
+								continue;
+							ScrabbleMove move = new ScrabbleMove(r,c-i,m,rackStr,DIR.E);
+							if (sb.isValidMove(move))
+								moves.add(move); 
+						}
+					}
+				}
+			}
+
 		}
 
 		return moves; 

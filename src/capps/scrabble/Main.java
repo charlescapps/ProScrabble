@@ -90,6 +90,7 @@ public class Main {
 
 	public static void testBestScores() throws ScrabbleException {
 		AIPlayer p1 = new AIPlayer("AAAAAAA",dict); 
+		o.println("Computing best move with rack AAAAAAA"); 
 
 		MoveScore best = p1.getBestMove(sBoard); 
 
@@ -104,6 +105,7 @@ public class Main {
 			o.println(sBoard); 
 		}
 		AIPlayer p2 = new AIPlayer("ZPAAAAA",dict); 
+		o.println("Computing best move with rack ZPAAAAA"); 
 
 		best = p2.getBestMove(sBoard); 
 
