@@ -45,9 +45,6 @@ public class AIPlayer {
 			boolean[][] searchedS, boolean[][] searchedE) 
 		throws ScrabbleException{
 
-		//o.println("Got copy:");
-		//o.println(ScrabbleBoard.toString(b)); 
-
 		if (r < 0 || r >= ROWS || c < 0 || c >= COLS) {
 			return null;
 		}
@@ -83,22 +80,21 @@ public class AIPlayer {
 							if (b[r-delta+i][c].getLetter() == EMPTY)
 								tilesNeeded.append(p.toString().charAt(i)); 
 						}
-						
-						if (!rack.hasTiles(tilesNeeded.toString())){
+						String grabNeededTiles; 	
+						if ( (grabNeededTiles = rack.hasTiles(tilesNeeded.toString()))==null){
 							//o.println("Doesn't have tiles needed"); 
 							continue; 
 						}
 
 						ScrabbleMove tryMove = 
 							new ScrabbleMove(r-delta,c,p.toString(),
-									tilesNeeded.toString(), d); 
+									grabNeededTiles, d); 
 
 						if (sb.isValidMove(tryMove)) {
 							int tmp = sb.computeScore(tryMove); 
 							if (tmp > bestScoreSoFar) {
 								bestScoreSoFar = tmp; 
 								bestMove = tryMove; 
-							//	o.println("New best move from prefix at (" + r + "," + c + ")\n" + bestMove); 
 							}
 						}
 					}
@@ -150,14 +146,15 @@ public class AIPlayer {
 								tilesNeeded.append(p.toString().charAt(i)); 
 						}
 						
-						if (!rack.hasTiles(tilesNeeded.toString())){
+						String grabTiles; 
+						if ( (grabTiles = rack.hasTiles(tilesNeeded.toString()))==null){
 							//o.println("Doesn't have tiles needed"); 
 							continue; 
 						}
 
 						ScrabbleMove tryMove = 
 							new ScrabbleMove(r,c-delta,p.toString(),
-									tilesNeeded.toString(), d); 
+									grabTiles, d); 
 
 						if (sb.isValidMove(tryMove)) {
 							int tmp = sb.computeScore(tryMove); 
@@ -252,7 +249,8 @@ public class AIPlayer {
 							}
 							if (!linesUp)
 								continue;
-							ScrabbleMove move = new ScrabbleMove(r-i,c,m,rackStr,DIR.S);
+							String grabTiles = rack.hasTiles(rackStr); 
+							ScrabbleMove move = new ScrabbleMove(r-i,c,m,grabTiles,DIR.S);
 							if (sb.isValidMove(move))
 								moves.add(move); 
 						}
@@ -315,6 +313,12 @@ public class AIPlayer {
 							if (m.equals("SYZYGIAL"))
 								o.println("SYZYGIAL lined up at ("+r+","+c+")"); 
 							ScrabbleMove move = new ScrabbleMove(r,c-i,m,rackStr,DIR.E);
+							if (m.equals("SYZYGIAL")) {
+								if (sb.isValidMove(move))
+									o.println("SYZYGIAL was a valid move");
+								else
+									o.println("SYZYGIAL was not a valid move"); 
+							}
 							if (sb.isValidMove(move))
 								moves.add(move); 
 						}
@@ -354,13 +358,63 @@ public class AIPlayer {
 	private void getSubstringsHelper
 		(boolean[] chosen, String base, int numChosen, int len, ArrayList<String> addToMe) {
 		if (numChosen == len) {
-			StringBuilder buildStr = new StringBuilder(); 
+			int numChosenWild = 0; 
 			for (int i = 0; i < base.length(); i++) {
-				if (chosen[i])
-					buildStr.append(base.charAt(i)); 
+				if (chosen[i] && base.charAt(i)==WILDCARD)
+					numChosenWild++; 
 			}
-			addToMe.add(buildStr.toString()); 
-			return; 
+			if (numChosenWild == 0) {
+				StringBuilder buildStr = new StringBuilder(); 
+				for (int i = 0; i < base.length(); i++) {
+					if (chosen[i]){
+						buildStr.append(base.charAt(i));
+					}
+				}
+				addToMe.add(buildStr.toString());
+				return; 
+			}
+			else { //Generate many, many strings all possible with wildcard
+				if (numChosenWild == 1) {
+					for (char j = 'A'; j <= 'Z'; j++) {
+
+						StringBuilder buildStr = new StringBuilder(); 
+						for (int i = 0; i < base.length(); i++) {
+							if (chosen[i]){
+								if (base.charAt(i) == WILDCARD) {
+									buildStr.append(j); 
+								}
+								else {
+									buildStr.append(base.charAt(i));
+								}
+							}
+						}
+						addToMe.add(buildStr.toString());
+					}
+				}
+				else if (numChosenWild == 2) {
+					for (char j = 'A'; j <= 'Z'; j++) {
+						for (char k = 'A'; k <= 'Z'; k++) {
+							int wildNum = 0; 
+
+							StringBuilder buildStr = new StringBuilder(); 
+							for (int i = 0; i < base.length(); i++) {
+								if (chosen[i]){
+									if (base.charAt(i) == WILDCARD) {
+										buildStr.append(wildNum==0?j:k);
+										if (wildNum==0)
+											wildNum++; 
+									}
+									else {
+										buildStr.append(base.charAt(i));
+									}
+								}
+							}
+							addToMe.add(buildStr.toString());
+						}
+					}
+				}
+				return; 
+			}
 		}
 		
 		for (int i = 0; i < base.length(); i++) {

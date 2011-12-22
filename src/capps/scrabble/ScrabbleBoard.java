@@ -112,13 +112,14 @@ public class ScrabbleBoard{
 		int r = m.row, c = m.col, score = 0, wordMult = 1; 
 
 
+		int tilesIndex = 0; 
 		for (int i = 0; i < m.play.length(); i++) {
 			if (m.dir == DIR.S) {
 				assert (r+i < ROWS); 
 				//If the board was empty there, score is value of tile to be played,
 				//and we get the letter bonuses/word bonuses
 				if (sBoard[r+i][c].getLetter()==EMPTY) { 
-					score += tileVal(m.play.charAt(i))*sBoard[r+i][c].letterMult;
+					score += tileVal(m.tilesUsed.charAt(tilesIndex++))*sBoard[r+i][c].letterMult;
 					wordMult *= sBoard[r+i][c].wordMult; 
 				}
 				//If the board wasn't empty, we don't get the letter/word bonuses
@@ -229,12 +230,12 @@ public class ScrabbleBoard{
 	}
 
 	public boolean isValidMove(ScrabbleMove m) {
-		/*if (m.tilesUsed.length() > 7) 
+		if (m.tilesUsed.length() > 7) 
 			return false; 
-		*/
+
 		int len = m.play.length(); 
 
-		if (len > 7 || len < 2)
+		if (len < 2)
 			return false; 
 
 		if (!dict.inDict(m.play)) //must be a real word.
@@ -243,7 +244,6 @@ public class ScrabbleBoard{
 		//Must fit on board
 		if (m.row < 0 || m.col < 0)
 			return false; 
-
 
 		if (m.dir == DIR.S && (m.row + len > ROWS))
 			return false; 

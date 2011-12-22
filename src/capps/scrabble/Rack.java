@@ -1,5 +1,8 @@
 package capps.scrabble; 
 
+import static capps.scrabble.ScrabbleConstants.sWILDCARD; 
+import static capps.scrabble.ScrabbleConstants.WILDCARD; 
+
 public class Rack {
 
 	private String tiles; 
@@ -15,9 +18,11 @@ public class Rack {
 		return tiles; 
 	}
 
-	public boolean hasTiles(String t) {
+	public String hasTiles(String t) {
 		boolean[] marked = new boolean[tiles.length()]; 
 		boolean markedSomething = false; 
+		StringBuffer buildTiles = new StringBuffer(); 
+		boolean hasWild = tiles.contains(sWILDCARD); 
 
 		for (int i = 0; i < t.length(); i++) {
 			markedSomething = false; 
@@ -25,14 +30,25 @@ public class Rack {
 				if (!marked[j] && tiles.charAt(j) == t.charAt(i)) {
 					marked[j] = true; 
 					markedSomething = true; 
+					buildTiles.append(tiles.charAt(j)); 
 					break; 
 				}
 			}
-			if (!markedSomething)
-				return false; 
+			if (!markedSomething){//Attempt to get wildcard
+				if (hasWild) {
+					for (int k = 0; k < tiles.length(); k++) {
+						if (!marked[k] && tiles.charAt(k)==WILDCARD) {
+							marked[k] = true; 
+							buildTiles.append(WILDCARD); 
+						}
+					}
+				}
+				else
+					return null; 
+			}
 		}
 
-		return true; 
+		return buildTiles.toString(); 
 	}
 
 	public void addTiles(String toAdd) throws ScrabbleException {
