@@ -1,16 +1,19 @@
 package capps.scrabble; 
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import static capps.scrabble.ScrabbleConstants.*; 
 import java.io.BufferedReader;
 import java.io.FileReader;
 
 public class Main {
-	private final static String USAGE = "java -jar scrabble.jar \"layout_file\" \"dict_file\""; 
+	private final static String USAGE 
+		= "java -jar scrabble.jar \"layout_file\" \"dict_object_file\""; 
 
 	private static BufferedReader layoutFile, dictFile; 
 
@@ -18,7 +21,8 @@ public class Main {
 	private static ScrabbleDict dict; 
 
 	public static void main (String [] args) 
-		throws FileNotFoundException, IOException, ScrabbleException
+		throws FileNotFoundException, IOException, 
+						  ScrabbleException, ClassNotFoundException
 	{
 		if (args.length != 2) {
 			o.println(USAGE); 
@@ -26,10 +30,12 @@ public class Main {
 		}
 
 		layoutFile = new BufferedReader(new FileReader(args[0])); 
-		dictFile = new BufferedReader(new FileReader(args[1])); 
+
+		FileInputStream fis = new FileInputStream(args[1]); 
+		ObjectInputStream ois = new ObjectInputStream(fis); 
 
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
-		dict = new ScrabbleDict(dictFile);
+		dict = (ScrabbleDict) ois.readObject();
 		//Dump the complete hash table to file for testing purposes.
 		BufferedWriter testDict = new BufferedWriter(new FileWriter("data/testDict.txt")); 
 		dict.dumpDict(testDict);

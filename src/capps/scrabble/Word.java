@@ -2,24 +2,25 @@ package capps.scrabble;
 
 import java.util.ArrayList;
 
-public class Word {
+public class Word implements java.io.Serializable {
+	private static final long serialVersionUID = 0x22222222;
 
 	private String txt; 
-	private ArrayList<Word> prefixes; 
 	private ArrayList<Word> suffixes; 
+	private ArrayList<Word> prefixes; 
 
 	public Word(String w) {
 		txt = w; 
-		prefixes = new ArrayList<Word>(); 
 		suffixes = new ArrayList<Word>(); 
-	}
-
-	public ArrayList<Word> getPrefixes() {
-		return prefixes; 
+		prefixes = new ArrayList<Word>(); 
 	}
 
 	public ArrayList<Word> getSuffixes() {
 		return suffixes; 
+	}
+
+	public ArrayList<Word> getPrefixes() {
+		return prefixes; 
 	}
 
 	public String toString() {return txt; }
@@ -39,12 +40,12 @@ public class Word {
 		return sb.toString(); 
 	}
 
-	public void addPrefix(Word p) {
-		prefixes.add(p); 
-	}
-
 	public void addSuffix(Word s) {
 		suffixes.add(s); 
+	}
+
+	public void addPrefix(Word s) {
+		prefixes.add(s); 
 	}
 
 	public boolean strEquals(String s) {

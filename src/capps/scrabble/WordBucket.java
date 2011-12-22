@@ -2,7 +2,9 @@ package	capps.scrabble;
 
 import java.util.Iterator;
 
-public class WordBucket implements Iterable<Word> {
+public class WordBucket 
+	implements Iterable<Word>, java.io.Serializable {
+	private static final long serialVersionUID = 0x11111111;
 
 	//Nested class for iterating over this uber-simple linked list
 	public static final class WordIter implements Iterator<Word> {

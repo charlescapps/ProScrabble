@@ -6,7 +6,8 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 
-public class ScrabbleDict {
+public class ScrabbleDict implements java.io.Serializable {
+	private static final long serialVersionUID=0xffffffff;
 
 	private static final int HASH_SIZE = 1 << 26; //26 letters in English language!
 	private final ArrayList<Word> lexiDict; 
@@ -43,19 +44,17 @@ public class ScrabbleDict {
 			}
 		}
 
-		//Third pass: Use hash table to find prefixes, by checking in O(1) time
-		//if extension part of suffix is a real word
+		//Third pass: Use hash table to find prefixes
+		//by checking words with the same letters
+		for (Word w: lexiDict) {
+			for (Word p: lexiDict) {
+				if (p.toString().length() > w.toString().length() && 
+						p.toString().endsWith(w.toString()) )
+					w.addPrefix(p); 
 
-		for (int i = 0; i < NUM_WORDS; i++) {
-			Word w = lexiDict.get(i); 
-			for (Word s: w.getSuffixes()) {
-				Word base; 
-				if( (base = exactMatch(s.toString().substring(w.toString().length()))) != null  ){
-					base.addPrefix(s); 
 				}
+			System.out.println("Got prefixes for: " + w); 
 			}
-		}
-
 	}
 
 	//Testing to verify it worked
@@ -124,5 +123,6 @@ public class ScrabbleDict {
 
 		return hashVal; 
 	}
+
 
 }

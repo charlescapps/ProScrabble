@@ -67,6 +67,7 @@ public class AIPlayer {
 			}
 			else {
 				for (Word p: w.getPrefixes()) { //Check if prefixes work
+					o.println("\tPrefix found: " + p); 
 					int delta = p.toString().length() - base.length(); 
 					if (r - delta < 0)
 						continue;
@@ -104,6 +105,18 @@ public class AIPlayer {
 			return null; 
 		else
 			return new MoveScore(bestMove, bestScoreSoFar); 
+	}
+
+	private ArrayList<String> getPrefixesFromRack(String base, int maxLen) {
+		String tiles = rack.toString(); 
+		Word match = null; 
+		int baseLen = base.length();
+		int MAX = 1 << Math.min(tiles.length(), maxLen); 
+		for (int i = 0; i < MAX; i++) {
+			
+		}
+		return null; 
+
 	}
 
 	public String getWordStartingHere(Square[][] b, int r, int c, DIR d) {

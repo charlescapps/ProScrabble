@@ -12,5 +12,9 @@ scrabble.jar: $(ALL_SRC)
 	$(CMD1) $(OPT1) $(ALL_SRC)
 	$(CMD2) $(OPT2) $(MAIN_CLASS) scrabble.jar $(CHG_DIR) $(DEST)
 
+gendict.jar: $(ALL_SRC)
+	$(CMD1) $(OPT1) $(ALL_SRC)
+	$(CMD2) $(OPT2) capps.scrabble.GenDict gendict.jar $(CHG_DIR) $(DEST)
+
 clean: 
 	rm nim.jar
