@@ -104,6 +104,7 @@ public class Main {
 			p1.playMove(sBoard,best.move); 
 			o.println(sBoard); 
 		}
+
 		AIPlayer p2 = new AIPlayer("ZPAAAAA",dict); 
 		o.println("Computing best move with rack ZPAAAAA"); 
 
@@ -117,6 +118,22 @@ public class Main {
 			o.println("Best Move:"); 
 			o.println(best.move); 
 			p2.playMove(sBoard,best.move); 
+			o.println(sBoard); 
+		}
+
+		AIPlayer p3 = new AIPlayer("YZYGIAL",dict); 
+		o.println("Computing best move with rack YZYGIAL"); 
+
+		best = p3.getBestMove(sBoard); 
+
+		if (best == null) {
+			o.println("NO MOVE FOUND!"); 
+		}
+		else {
+			o.println("Best Score:" + best.score); 
+			o.println("Best Move:"); 
+			o.println(best.move); 
+			p3.playMove(sBoard,best.move); 
 			o.println(sBoard); 
 		}
 	}

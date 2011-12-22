@@ -122,7 +122,6 @@ public class AIPlayer {
 						bestScoreSoFar = score; 
 						//o.println("New best move from perpMoves at (" + r + "," + c + ")\n" + bestMove); 
 					}
-
 				}
 			}
 		}
@@ -176,9 +175,22 @@ public class AIPlayer {
 					searchedE[r][c1] = true; 
 				}
 			}
+			//Perp word case going EAST, i.e. we're in the middle of a word
+			else {
+				//NEED helper function to get all possible perp words that fit on
+				//board and match up with existing tiles
+				ArrayList<ScrabbleMove> perpMoves = getPerpMoves
+					(sb,b,r,c,DIR.E); 
+				for (ScrabbleMove m: perpMoves) {
+					int score = sb.computeScore(m); 
+					if (bestMove == null || bestScoreSoFar < score) {
+						bestMove = m; 
+						bestScoreSoFar = score; 
+						//o.println("New best move from perpMoves at (" + r + "," + c + ")\n" + bestMove); 
+					}
+				}
+			}
 		}
-
-
 
 		if (bestMove == null)
 			return null; 
@@ -206,7 +218,9 @@ public class AIPlayer {
 							numTilesReq++; 
 					}
 
-					if (numTilesReq == 0 || numTilesReq > numTiles)
+					if (numTilesReq == 0)
+						continue; 
+					if (numTilesReq > numTiles)
 						break; 
 
 					ArrayList<String> substr = getSubstringsOfRack(numTilesReq); 
@@ -257,8 +271,15 @@ public class AIPlayer {
 							numTilesReq++; 
 					}
 
-					if (numTilesReq == 0 || numTilesReq > numTiles)
+					if (numTilesReq == 0)
+						continue; 
+					if (numTilesReq > numTiles)
 						break; 
+
+					if (numTilesReq == 7 ) {
+						o.println("Tiles required = 7 going E at (" + r + "," + c+"), "
+								+"considering range ("+(-i)+","+j+")"); 
+					}
 
 					ArrayList<String> substr = getSubstringsOfRack(numTilesReq); 
 					for (String rackStr: substr) {
@@ -287,8 +308,12 @@ public class AIPlayer {
 									break;
 								}
 							}
+							if (m.equals("SYZYGIAL"))
+								o.println("SYZYGIAL was possible match at ("+r+","+c+")"); 
 							if (!linesUp)
 								continue;
+							if (m.equals("SYZYGIAL"))
+								o.println("SYZYGIAL lined up at ("+r+","+c+")"); 
 							ScrabbleMove move = new ScrabbleMove(r,c-i,m,rackStr,DIR.E);
 							if (sb.isValidMove(move))
 								moves.add(move); 
