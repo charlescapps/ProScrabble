@@ -51,7 +51,7 @@ public class Main {
 		o.println("Score: " + score); 
 		o.println(sBoard); 
 
-		ScrabbleMove t2 = new ScrabbleMove(9, 7, "TEA", "TEA", DIR.E); 
+		ScrabbleMove t2 = new ScrabbleMove(9, 7, "TEA", "EA", DIR.E); 
 		o.println("Is valid move? " + sBoard.isValidMove(t2)); 
 		score = sBoard.makeMove(t2); 
 		o.println("Score: " + score); 
@@ -75,7 +75,7 @@ public class Main {
 		o.println("Score: " + score); 
 		o.println(sBoard); 
 
-		ScrabbleMove t6 = new ScrabbleMove(6, 8, "BATE", "BATE", DIR.S); 
+		ScrabbleMove t6 = new ScrabbleMove(6, 8, "BATE", "T", DIR.S); 
 		o.println("Is valid move? " + sBoard.isValidMove(t6)); 
 		score = sBoard.makeMove(t6); 
 		o.println("Score: " + score); 
@@ -84,6 +84,13 @@ public class Main {
 		ScrabbleMove t7 = new ScrabbleMove(1, 1, "ELITE", "ELITE", DIR.E); 
 		o.println("Is valid move? " + sBoard.isValidMove(t7)); 
 		score = sBoard.makeMove(t7); 
+		o.println("Score: " + score); 
+		o.println(sBoard); 
+
+		//Test some wildcard moves
+		ScrabbleMove t8 = new ScrabbleMove(1, 1, "ELITE", "ELITE", DIR.E); 
+		o.println("Is valid move? " + sBoard.isValidMove(t8)); 
+		score = sBoard.makeMove(t8); 
 		o.println("Score: " + score); 
 		o.println(sBoard); 
 	}

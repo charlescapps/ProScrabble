@@ -22,7 +22,8 @@ public class ScrabbleMove {
 		StringBuffer sb = new StringBuffer(); 
 
 		sb.append("Scrabble Move: row=" + row + ", col=" + col + NL); 
-		sb.append("Word=\"" + play + "\", dir=" + dir.toString()); 
+		sb.append("\tWord=\"" + play + "\", dir=" + dir.toString()); 
+		sb.append("\tTiles used=\"" + tilesUsed + "\""); 
 		return sb.toString(); 
 	}
 

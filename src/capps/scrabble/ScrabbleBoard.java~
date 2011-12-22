@@ -76,8 +76,6 @@ public class ScrabbleBoard{
 	}
 
 	public int computeScore(ScrabbleMove m) {
-		if (!isValidMove(m))
-			return -1; 
 		int cumulativeScore = 0; 
 		int r = m.row, c = m.col; 
 		ScrabbleMove perpMove; 
@@ -88,26 +86,18 @@ public class ScrabbleBoard{
 		//Here: we scan the length of the play + possible suffix. 
 		//No need to consider prefixes--a move by definition starts at the beginning of a played word
 		if (m.dir == DIR.S) {
-			int tilesIndex = 0;
 			while ((r+i < ROWS) && (i < m.play.length() || sBoard[r+i][c].getLetter() != EMPTY)) {
-				if (sBoard[r+i][c].getLetter() == EMPTY 
-						&& (perpMove = getImplicitPerpendicularMove(r+i, c, m, m.tilesUsed.charAt(tilesIndex))) != null) {
+				if (sBoard[r+i][c].getLetter() == EMPTY && (perpMove = getImplicitPerpendicularMove(r+i, c, m)) != null) {
 					cumulativeScore += oneWordScore(perpMove); 
 				}
-				if (sBoard[r+i][c].getLetter()==EMPTY)
-					tilesIndex++;
 				i++; 
 			}
 		}
 		else {
-			int tilesIndex = 0;
 			while ( (c+i < COLS) && (i < m.play.length() || sBoard[r][c+i].getLetter() != EMPTY)) {
-				if (sBoard[r][c+i].getLetter() == EMPTY 
-					&& (perpMove = getImplicitPerpendicularMove(r, c+i, m,m.tilesUsed.charAt(tilesIndex))) != null) {
+				if (sBoard[r][c+i].getLetter() == EMPTY && (perpMove = getImplicitPerpendicularMove(r, c+i, m)) != null) {
 					cumulativeScore += oneWordScore(perpMove); 
 				}
-				if (sBoard[r][c+i].getLetter()==EMPTY)
-					tilesIndex++; 
 				i++;
 			}
 		}
@@ -121,15 +111,11 @@ public class ScrabbleBoard{
 		//o.println(m); 
 		int r = m.row, c = m.col, score = 0, wordMult = 1; 
 
+
 		int tilesIndex = 0; 
 		for (int i = 0; i < m.play.length(); i++) {
 			if (m.dir == DIR.S) {
 				assert (r+i < ROWS); 
-				if (tilesIndex >= m.tilesUsed.length()) {
-					o.println("Not enough tiles in oneWordScore:");
-					o.println("Move:"); 
-					o.println(m); 
-				}
 				//If the board was empty there, score is value of tile to be played,
 				//and we get the letter bonuses/word bonuses
 				if (sBoard[r+i][c].getLetter()==EMPTY) { 
@@ -158,7 +144,7 @@ public class ScrabbleBoard{
 		return score*wordMult; 
 	}
 
-	public ScrabbleMove getImplicitPerpendicularMove(int r, int c, ScrabbleMove originalMove, char tileUsed) {
+	public ScrabbleMove getImplicitPerpendicularMove(int r, int c, ScrabbleMove originalMove) {
 		if (originalMove.dir == DIR.S) {
 			if ( (c == 0 || sBoard[r][c-1].getLetter() == EMPTY) && (c == COLS - 1 || sBoard[r][c+1].getLetter()==EMPTY)) {
 				return null; //No perpendicular move.Check this first since it will be most frequent.
@@ -182,7 +168,7 @@ public class ScrabbleBoard{
 						perpWord += sBoard[r][i].getLetter(); 
 					}
 				}
-				return new ScrabbleMove(r, c - startI + 1, perpWord, "" + tileUsed, DIR.E); 
+				return new ScrabbleMove(r, c - startI + 1, perpWord, "", DIR.E); 
 			}
 		}
 		else {
@@ -208,7 +194,7 @@ public class ScrabbleBoard{
 						perpWord += sBoard[i][c].getLetter(); 
 					}
 				}
-				return new ScrabbleMove(r-startI+1, c, perpWord, "" + tileUsed, DIR.S); 
+				return new ScrabbleMove(r-startI+1, c, perpWord, "", DIR.S); 
 			}
 		}
 	}
@@ -244,7 +230,7 @@ public class ScrabbleBoard{
 	}
 
 	public boolean isValidMove(ScrabbleMove m) {
-		if (m.tilesUsed.length() > 7 || m.tilesUsed.length() <= 0) 
+		if (m.tilesUsed.length() > 7) 
 			return false; 
 
 		int len = m.play.length(); 
@@ -302,14 +288,10 @@ public class ScrabbleBoard{
 
 			//Perp moves must be in dictionary
 			ScrabbleMove perpMove; 
-			if (m.dir == DIR.S 
-					&& (perpMove = getImplicitPerpendicularMove(r+i, c, m, WILDCARD)) != null 
-					&& !dict.inDict(perpMove.play)) {
+			if (m.dir == DIR.S && (perpMove = getImplicitPerpendicularMove(r+i, c, m)) != null && !dict.inDict(perpMove.play)) {
 				return false; 
 			}
-			else if (m.dir == DIR.E 
-					&& (perpMove = getImplicitPerpendicularMove(r, c+i, m, WILDCARD)) != null 
-					&& !dict.inDict(perpMove.play)) {
+			else if (m.dir == DIR.E && (perpMove = getImplicitPerpendicularMove(r, c+i, m)) != null && !dict.inDict(perpMove.play)) {
 				return false; 
 			}
 

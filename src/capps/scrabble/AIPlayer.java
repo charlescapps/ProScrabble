@@ -24,7 +24,6 @@ public class AIPlayer {
 		for (int i = 0; i < ROWS; i++) {
 			for (int j = 0; j < COLS; j++) {
 				if (board[i][j].getLetter() != EMPTY){
-//					o.println("Getting best score at ("+i+","+j+")"); 
 					tmpMoveScore = genBestLocalMove(b,board,i,j,searchedS,searchedE); 
 					if (tmpMoveScore==null)
 						continue; 
@@ -52,10 +51,8 @@ public class AIPlayer {
 			return null; 
 		}
 
-
 		int bestScoreSoFar = 0; 
 		ScrabbleMove bestMove = null; 
-
 		//Looking if we're at start of a word
 		//SOUTH case:
 		DIR d = DIR.S; 
@@ -69,7 +66,6 @@ public class AIPlayer {
 				}
 				else {
 					for (Word p: w.getPrefixes()) { //Check if prefixes work
-						//o.println("\tPrefix found: " + p); 
 						int delta = p.toString().length() - base.length(); 
 						if (r - delta < 0)
 							continue;
@@ -82,7 +78,6 @@ public class AIPlayer {
 						}
 						String grabNeededTiles; 	
 						if ( (grabNeededTiles = rack.hasTiles(tilesNeeded.toString()))==null){
-							//o.println("Doesn't have tiles needed"); 
 							continue; 
 						}
 
@@ -116,7 +111,6 @@ public class AIPlayer {
 					if (bestMove == null || bestScoreSoFar < score) {
 						bestMove = m; 
 						bestScoreSoFar = score; 
-						//o.println("New best move from perpMoves at (" + r + "," + c + ")\n" + bestMove); 
 					}
 				}
 			}
@@ -183,7 +177,6 @@ public class AIPlayer {
 					if (bestMove == null || bestScoreSoFar < score) {
 						bestMove = m; 
 						bestScoreSoFar = score; 
-						//o.println("New best move from perpMoves at (" + r + "," + c + ")\n" + bestMove); 
 					}
 				}
 			}
@@ -250,9 +243,20 @@ public class AIPlayer {
 							if (!linesUp)
 								continue;
 							String grabTiles = rack.hasTiles(rackStr); 
+							if (grabTiles.length() != rackStr.length()) {
+								o.println("Grabbed tiles: \"" + grabTiles); 
+								o.println("Needed string: \"" + rackStr); 
+							}
 							ScrabbleMove move = new ScrabbleMove(r-i,c,m,grabTiles,DIR.S);
-							if (sb.isValidMove(move))
+							if (sb.isValidMove(move)){
+								if (grabTiles.equals("")){
+									o.println("grabTiles==\"\" in perpMoves"); 
+									o.println("rackStr==\"" + rackStr + "\""); 
+									o.println("\tPlay:"+m); 
+									o.println(move); 
+								}
 								moves.add(move); 
+							}
 						}
 					}
 				}
@@ -306,26 +310,23 @@ public class AIPlayer {
 									break;
 								}
 							}
-							if (m.equals("SYZYGIAL"))
-								o.println("SYZYGIAL was possible match at ("+r+","+c+")"); 
 							if (!linesUp)
 								continue;
-							if (m.equals("SYZYGIAL"))
-								o.println("SYZYGIAL lined up at ("+r+","+c+")"); 
-							ScrabbleMove move = new ScrabbleMove(r,c-i,m,rackStr,DIR.E);
-							if (m.equals("SYZYGIAL")) {
-								if (sb.isValidMove(move))
-									o.println("SYZYGIAL was a valid move");
-								else
-									o.println("SYZYGIAL was not a valid move"); 
-							}
-							if (sb.isValidMove(move))
+							String grabTiles = rack.hasTiles(rackStr); 
+							ScrabbleMove move = new ScrabbleMove(r,c-i,m,grabTiles,DIR.E);
+							if (sb.isValidMove(move)) {
+								if (grabTiles.equals("")){
+									o.println("grabTiles==\"\" in perpMoves"); 
+									o.println("rackStr==\"" + rackStr + "\""); 
+									o.println("\tPlay:"+m); 
+									o.println(move); 
+								}
 								moves.add(move); 
+							}
 						}
 					}
 				}
 			}
-
 		}
 
 		return moves; 
