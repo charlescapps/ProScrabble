@@ -154,6 +154,9 @@ public class ScrabbleBoard{
 	}
 
 	public ScrabbleMove getImplicitPerpendicularMove(int r, int c, ScrabbleMove originalMove, char tileUsed) {
+		if (sBoard[r][c].getLetter() != EMPTY)
+			return null; 
+
 		if (originalMove.dir == DIR.S) {
 			if ( (c == 0 || sBoard[r][c-1].getLetter() == EMPTY) && (c == COLS - 1 || sBoard[r][c+1].getLetter()==EMPTY)) {
 				return null; //No perpendicular move.Check this first since it will be most frequent.
@@ -211,8 +214,10 @@ public class ScrabbleBoard{
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(); 
+		sb.append("  0 1 2 3 4 5 6 7 8 9 1011121314" + NL); 
 
 		for (int i = 0; i < ROWS; i++) {
+			sb.append(i < 10 ? i + " " : i); 
 			for (int j = 0; j < COLS; j++) {
 				sb.append(sBoard[i][j].getLetter()); 
 				sb.append(' '); 
@@ -320,12 +325,23 @@ public class ScrabbleBoard{
 			}
 		}
 
-		if (!tilesNeeded.toString().equals(m.tilesUsed))
+		if (!equalsWithWild(tilesNeeded.toString(), m.tilesUsed))
 			return false; 
 
 		//That about covers all the bases!
 		//o.println("Next to somethin'? " + nextToSomething); 
 		return nextToSomething; 
+	}
+
+	private boolean equalsWithWild(String s, String rackStr) {
+		if (s.length() != rackStr.length())
+			return false; 
+
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) != rackStr.charAt(i) && rackStr.charAt(i) != WILDCARD)
+				return false; 
+		}
+		return true; 
 	}
 
 	public Square[][] getBoardCopy() {

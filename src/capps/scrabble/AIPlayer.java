@@ -242,19 +242,31 @@ public class AIPlayer {
 							}
 							if (!linesUp)
 								continue;
-							String grabTiles = rack.hasTiles(rackStr); 
+
+
+							StringBuffer rackStrInOrder = new StringBuffer(); 
+							for (int r1 = r-i; r1 <= r+j; r1++) {
+								if (squares[r1][c].getLetter() == EMPTY)
+									rackStrInOrder.append(m.charAt(r1-r+i)); 
+							}
+
+							String grabTiles = rack.hasTiles(rackStrInOrder.toString()); 
 							if (grabTiles.length() != rackStr.length()) {
 								o.println("Grabbed tiles: \"" + grabTiles); 
 								o.println("Needed string: \"" + rackStr); 
 							}
+							if (r ==11 && c == 14) {
+								o.println("Match lined up: " + m); 
+								o.println("rack str: " + rackStr); 
+								o.println("In order: " + rackStrInOrder); 
+								o.println("Grabbed: " + grabTiles); 
+								o.println(); 
+							}
+
 							ScrabbleMove move = new ScrabbleMove(r-i,c,m,grabTiles,DIR.S);
 							if (sb.isValidMove(move)){
-								if (grabTiles.equals("")){
-									o.println("grabTiles==\"\" in perpMoves"); 
-									o.println("rackStr==\"" + rackStr + "\""); 
-									o.println("\tPlay:"+m); 
-									o.println(move); 
-								}
+								o.println("Valid move found:\n" + move);
+								o.println(); 
 								moves.add(move); 
 							}
 						}
@@ -307,7 +319,14 @@ public class AIPlayer {
 							}
 							if (!linesUp)
 								continue;
-							String grabTiles = rack.hasTiles(rackStr); 
+
+							StringBuffer rackStrInOrder = new StringBuffer(); 
+							for (int c1 = c-i; c1 <= c+j; c1++) {
+								if (squares[r][c1].getLetter() == EMPTY)
+									rackStrInOrder.append(m.charAt(c1-c+i)); 
+							}
+
+							String grabTiles = rack.hasTiles(rackStrInOrder.toString()); 
 							ScrabbleMove move = new ScrabbleMove(r,c-i,m,grabTiles,DIR.E);
 							if (sb.isValidMove(move)) {
 								if (grabTiles.equals("")){

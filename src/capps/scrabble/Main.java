@@ -167,7 +167,7 @@ public class Main {
 			o.println(sBoard); 
 		}
 
-		AIPlayer p4 = new AIPlayer("XHEZQA*",dict); 
+/*		AIPlayer p4 = new AIPlayer("XHEZQA*",dict); 
 		o.println("Computing best move with rack XHEZQA*"); 
 		best = p4.getBestMove(sBoard); 
 
@@ -181,7 +181,7 @@ public class Main {
 			p4.playMove(sBoard,best.move); 
 			o.println(sBoard); 
 		}
-
+*/
 		AIPlayer p5 = new AIPlayer("*ENITHA",dict); 
 		o.println("Computing best move with rack *ENITHA"); 
 		best = p5.getBestMove(sBoard); 
