@@ -131,6 +131,8 @@ public class Rack {
 		}
 
 		substrByLen = new ArrayList<ArrayList<String>>(); 
+		for (int i = 0; i < tiles.length(); i++) 
+			substrByLen.add(new ArrayList<String>()); 
 	}
 
 	public void removeTiles (String toRemove) throws ScrabbleException {
@@ -170,6 +172,8 @@ public class Rack {
 				numWild++; 
 		}
 		substrByLen = new ArrayList<ArrayList<String>>(); 
+		for (int i = 0; i < tiles.length(); i++) 
+			substrByLen.add(new ArrayList<String>()); 
 	}
 
 }

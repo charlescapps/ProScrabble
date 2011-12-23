@@ -166,6 +166,12 @@ public class PlayScrabble {
 			return; 
 		}
 
+		if (bestMove == null) {
+			o.println("You have no moves. Suggest getting tiles from bag."); 
+			o.println(); 
+			return; 
+		}
+
 		o.println("Your best move is " + bestMove.score + " points!"); 
 		o.println(bestMove.move); 
 		o.println(); 
