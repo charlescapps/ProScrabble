@@ -36,12 +36,20 @@ public class Main {
 		FileInputStream fis = new FileInputStream(args[1]); 
 		ObjectInputStream ois = new ObjectInputStream(fis); 
 
+		o.println("Please be patient. It takes 1-2 minutes to load the hash table."); 
+		o.println(); 
+
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
 		dict = (ScrabbleDict) ois.readObject();
+		o.println();
 
 		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
 		sBoard = new ScrabbleBoard(layoutFile, dict); 
-		
+		o.println(); 
+
+		o.println("========Finished loading. Welcome to Scrabble Player!========"); 
+		o.println(); 
+
 		//testMove(); 
 		//testBestScores(); 
 		//testSubstrings(); 

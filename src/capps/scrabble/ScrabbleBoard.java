@@ -223,17 +223,55 @@ public class ScrabbleBoard{
 
 	@Override
 	public String toString() {
+		final String letterX2 = "\u00B2"; 
+		final String letterX3 = "\u00B3"; 
+		final String wordX2 = "2"; 
+		final String wordX3 = "3";
+		final String vertBorder = "\u2503";
+		final String horiBorder = "\u2501";
+		final String topLeft = "\u250F"; 
+		final String topRight = "\u2513"; 
+		final String bottomLeft = "\u2517"; 
+		final String bottomRight = "\u251B"; 
+		final String noTile = "\u2591"; 
+
 		StringBuffer sb = new StringBuffer(); 
-		sb.append("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4" + NL); 
+		sb.append("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 " + NL); 
+		sb.append("  " + topLeft); 
+		for (int i = 0; i < 30; i++) {
+			sb.append(horiBorder); 
+		}
+		sb.append(topRight + NL); 
 
 		for (int i = 0; i < ROWS; i++) {
-			sb.append( (i % 10) + " "); 
+			sb.append( (i % 10) + " " + vertBorder); 
 			for (int j = 0; j < COLS; j++) {
-				sb.append(sBoard[i][j].getLetter()); 
+				char letter = sBoard[i][j].getLetter(); 
+				if (letter == EMPTY) {
+					if (sBoard[i][j].letterMult == 2) 
+						sb.append(letterX2); 
+					else if (sBoard[i][j].letterMult == 3)
+						sb.append(letterX3); 
+					else if (sBoard[i][j].wordMult == 2)
+						sb.append(wordX2); 
+					else if (sBoard[i][j].wordMult == 3)
+						sb.append(wordX3); 
+					else
+						sb.append(noTile); 
+				}
+				else {
+					sb.append(sBoard[i][j].getLetter()); 
+				}
 				sb.append(' '); 
 			}
+			sb.append(vertBorder); 
 			sb.append(NL); 
 		}
+
+		sb.append("  " + bottomLeft); 
+		for (int i = 0; i < 30; i++) 
+			sb.append(horiBorder); 
+		sb.append(bottomRight+ NL); 
 
 		return sb.toString(); 
 	}

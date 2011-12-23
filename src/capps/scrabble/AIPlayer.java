@@ -40,9 +40,12 @@ public class AIPlayer {
 			for (int j = 0; j < COLS; j++) {
 				if (board[i][j].getLetter() != EMPTY){
 					tmpMoveScore = genBestLocalMove(b,board,i,j,searchedS,searchedE); 
-					if (tmpMoveScore==null)
-						continue; 
-					if (bestSoFar == null || tmpMoveScore.score > bestSoFar.score)
+					if (tmpMoveScore != null && (bestSoFar == null || tmpMoveScore.score > bestSoFar.score) )
+						bestSoFar = tmpMoveScore; 
+				}
+				else if (hasAdjacentTile(i,j,board)) {
+					tmpMoveScore = getBestParallelMove(b,board,i,j); 
+					if (tmpMoveScore != null && (bestSoFar == null || tmpMoveScore.score > bestSoFar.score))
 						bestSoFar = tmpMoveScore; 
 				}
 			}
@@ -50,6 +53,20 @@ public class AIPlayer {
 
 		return bestSoFar; 
 		
+	}
+
+	private boolean hasAdjacentTile(int r, int c, Square[][] b) {
+		if (b[r][c].getLetter() != EMPTY)
+			return false; 
+		if (r > 0 && b[r-1][c].getLetter() != EMPTY)
+			return true; 
+		if (c > 0 && b[r][c-1].getLetter() != EMPTY)
+			return true; 
+		if (r < ROWS - 1 && b[r+1][c].getLetter() != EMPTY)
+			return true; 
+		if (c < COLS - 1 && b[r][c+1].getLetter() != EMPTY)
+			return true; 
+		return false; 
 	}
 
 	public MoveScore getBestFirstMove(ScrabbleBoard sb, Square[][] b) {
@@ -402,6 +419,10 @@ public class AIPlayer {
 
 	}
 
+	private MoveScore getBestParallelMove(ScrabbleBoard sb, Square[][] b, int r, int c) {
+
+		return null; 
+	}
 
 	public String getWordStartingHere(Square[][] b, int r, int c, DIR d) {
 		if (d == DIR.S) {

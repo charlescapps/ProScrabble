@@ -13,13 +13,15 @@ public class ScrabbleDict implements java.io.Serializable {
 	private final ArrayList<Word> lexiDict; 
 	private final WordBucket[] hashDict;
 	private final int NUM_WORDS; 
+	private final static char COMMENT_CHAR = '#';
 
 	public ScrabbleDict(BufferedReader dictFile) throws IOException {
 		//first pass: get in lexicographic order
 		lexiDict = new ArrayList<Word>(); 
 		String line; 
 		while ((line = dictFile.readLine()) != null) {
-			if (line.length() > 1) {
+			//Allow commenting lines when I discover words not in 4th edition!
+			if (line.length() > 1 && line.charAt(0) != COMMENT_CHAR ) { 
 				lexiDict.add(new Word(line)); 
 			}
 		}

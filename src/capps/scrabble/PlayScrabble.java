@@ -29,7 +29,8 @@ public class PlayScrabble {
 	}
 
 	private void getInitialPlayer() throws IOException{
-		o.println("ENTER INITIAL RACK:"); 
+		
+		o.print("Enter initial rack>"); 
 		try {
 			ai = new AIPlayer(in.readLine(), dict); 
 		}
@@ -38,6 +39,7 @@ public class PlayScrabble {
 			o.println(e.getMessage()); 
 			getInitialPlayer(); 
 		}
+		o.println(); 
 	}
 
 	private void gameLoop() {
@@ -80,7 +82,7 @@ public class PlayScrabble {
 	}
 
 	private void giveTiles() throws IOException{
-		o.println("Enter tiles to add to your rack:"); 
+		o.print("Enter tiles to add to your rack>"); 
 		String t = in.readLine(); 
 		o.println(); 
 		try {
@@ -88,9 +90,12 @@ public class PlayScrabble {
 		}
 		catch (ScrabbleException e) {
 			o.println("Exception occurred getting tiles. Returning to menu."); 
+			o.println(e.getMessage());
 			o.println(); 
 			return; 
 		}
+		o.println("Your new rack: \"" + ai.getRack().toString() + "\""); 
+		o.println(); 
 	}
 
 	private void playOpponentMove() throws IOException {
@@ -190,6 +195,7 @@ public class PlayScrabble {
 			catch (ScrabbleException e) {
 				o.println("Exception occurred playing move. Returning to menu."); 
 				o.println(e.getMessage()); 
+				o.println(); 
 				return; 
 			}
 		}

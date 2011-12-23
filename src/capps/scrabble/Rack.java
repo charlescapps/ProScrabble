@@ -14,7 +14,7 @@ public class Rack {
 	public Rack(String initialTiles) throws ScrabbleException {
 		tiles = initialTiles.toUpperCase(); 
 		if (tiles.length() != 7) 
-			throw new ScrabbleException("Initial tiles not size 7"); 
+			throw new ScrabbleException("Initial tiles not size 7!"); 
 
 		substrByLen = new ArrayList<ArrayList<String>>(); 
 		numWild = 0;
@@ -120,7 +120,7 @@ public class Rack {
 
 	public void addTiles(String toAdd) throws ScrabbleException {
 		if (tiles.length() + toAdd.length() > 7)
-			throw new ScrabbleException("Too many tiles given to add"); 
+			throw new ScrabbleException("Too many tiles given to add!"); 
 
 		tiles = (tiles + toAdd).toUpperCase(); 
 
