@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import java.util.ArrayList;
+
 import static capps.scrabble.ScrabbleConstants.*; 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -42,6 +44,27 @@ public class Main {
 		
 		testMove(); 
 		testBestScores(); 
+		//testSubstrings(); 
+	}
+
+	public static void testSubstrings() throws ScrabbleException{
+		Rack r = new Rack("ABDXQEE"); 
+		ArrayList<String> len3Substr = r.getSubstringsOfRack(3); 
+		o.println("Substrngs of len 3 of 'ABDXQEE'"); 
+		for (String s: len3Substr) 
+			o.println("\t" + s); 
+
+		r = new Rack("ABCDEF*"); 
+		ArrayList<String> len7Substr = r.getSubstringsOfRack(7); 
+		o.println("Substrngs of len 7 of 'ABCDEF*'"); 
+		for (String s: len7Substr) 
+			o.println("\t" + s); 
+
+		r = new Rack("ABCDE**"); 
+		ArrayList<String> len5Substr = r.getSubstringsOfRack(5); 
+		o.println("Substrngs of len 5 of 'ABCDE**'"); 
+		for (String s: len5Substr) 
+			o.println("\t" + s); 
 	}
 
 	public static void testMove() {
@@ -141,6 +164,36 @@ public class Main {
 			o.println("Best Move:"); 
 			o.println(best.move); 
 			p3.playMove(sBoard,best.move); 
+			o.println(sBoard); 
+		}
+
+		AIPlayer p4 = new AIPlayer("XHEZQA*",dict); 
+		o.println("Computing best move with rack XHEZQA*"); 
+		best = p4.getBestMove(sBoard); 
+
+		if (best == null) {
+			o.println("NO MOVE FOUND!"); 
+		}
+		else {
+			o.println("Best Score:" + best.score); 
+			o.println("Best Move:"); 
+			o.println(best.move); 
+			p4.playMove(sBoard,best.move); 
+			o.println(sBoard); 
+		}
+
+		AIPlayer p5 = new AIPlayer("*ENITHA",dict); 
+		o.println("Computing best move with rack *ENITHA"); 
+		best = p5.getBestMove(sBoard); 
+
+		if (best == null) {
+			o.println("NO MOVE FOUND!"); 
+		}
+		else {
+			o.println("Best Score:" + best.score); 
+			o.println("Best Move:"); 
+			o.println(best.move); 
+			p5.playMove(sBoard,best.move); 
 			o.println(sBoard); 
 		}
 	}

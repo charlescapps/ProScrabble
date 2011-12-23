@@ -125,11 +125,6 @@ public class ScrabbleBoard{
 		for (int i = 0; i < m.play.length(); i++) {
 			if (m.dir == DIR.S) {
 				assert (r+i < ROWS); 
-				if (tilesIndex >= m.tilesUsed.length()) {
-					o.println("Not enough tiles in oneWordScore:");
-					o.println("Move:"); 
-					o.println(m); 
-				}
 				//If the board was empty there, score is value of tile to be played,
 				//and we get the letter bonuses/word bonuses
 				if (sBoard[r+i][c].getLetter()==EMPTY) { 

@@ -23,7 +23,7 @@ public class ScrabbleMove {
 
 		sb.append("Scrabble Move: row=" + row + ", col=" + col + NL); 
 		sb.append("\tWord=\"" + play + "\", dir=" + dir.toString()); 
-		sb.append("\tTiles used=\"" + tilesUsed + "\""); 
+		sb.append("\n\nTiles used=\"" + tilesUsed + "\""); 
 		return sb.toString(); 
 	}
 

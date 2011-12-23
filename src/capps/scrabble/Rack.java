@@ -1,21 +1,88 @@
 package capps.scrabble; 
 
+import java.util.ArrayList;
+
 import static capps.scrabble.ScrabbleConstants.sWILDCARD; 
 import static capps.scrabble.ScrabbleConstants.WILDCARD; 
 
 public class Rack {
 
 	private String tiles; 
+	private ArrayList<ArrayList<String>> substrByLen; 
+	private int numWild; 
 
 	public Rack(String initialTiles) throws ScrabbleException {
 		tiles = initialTiles.toUpperCase(); 
 		if (tiles.length() != 7) 
 			throw new ScrabbleException("Initial tiles not size 7"); 
+
+		substrByLen = new ArrayList<ArrayList<String>>(); 
+		numWild = 0;
+		for (int i = 0; i < tiles.length(); i++){ 
+			substrByLen.add(new ArrayList<String>());
+			if (tiles.charAt(i)==WILDCARD)
+				numWild++; 
+		}
+		assert(numWild <=2); 
 	}
 
 	@Override
 	public String toString() {
 		return tiles; 
+	}
+
+	public ArrayList<String> getSubstringsOfRack(int len) {
+		if (len == 0)
+			return null; 
+
+		ArrayList<String> substrings=substrByLen.get(len-1); 
+
+		if (substrings.size() > 0)
+			return substrings; 
+
+		int rackLen = tiles.length(); 
+
+		if (len == rackLen & numWild == 0){
+			substrings.add(tiles);
+			return substrings; 
+		}
+
+		boolean[] chosen = new boolean[rackLen]; 
+
+		getSubstringsHelper(chosen,tiles,new StringBuffer(),len,0,substrings); 
+		return substrings; 
+	}
+
+	private void getSubstringsHelper
+		(boolean[] chosen, String base, StringBuffer buildStr, int len, int startIndex, ArrayList<String> addToMe) {
+
+		if (buildStr.length() + base.length() - startIndex < len)
+			return; 
+
+		if (buildStr.length() == len) {
+			if (!addToMe.contains(buildStr.toString()))
+				addToMe.add(buildStr.toString()); 
+			return; 
+		}
+
+		for (int i = startIndex; i < base.length(); i++) {
+			if (!chosen[i]) {
+				chosen[i] = true;
+				if (base.charAt(i) != WILDCARD){
+					buildStr.append(base.charAt(i)); 
+					getSubstringsHelper(chosen,base,buildStr,len,(i+1),addToMe);
+					buildStr.deleteCharAt(buildStr.length()-1); 
+				}
+				else {
+					for (char c = 'A'; c <= 'Z'; c++) {//Wildcards
+						buildStr.append(c); 
+						getSubstringsHelper(chosen,base,buildStr,len,(i+1),addToMe);
+						buildStr.deleteCharAt(buildStr.length()-1); 
+					}
+				}
+				chosen[i] = false; 
+			}
+		}
 	}
 
 	public String hasTiles(String t) {
@@ -34,18 +101,18 @@ public class Rack {
 					break; 
 				}
 			}
-			if (!markedSomething){//Attempt to get wildcard
-				if (hasWild) {
-					for (int k = 0; k < tiles.length(); k++) {
-						if (!marked[k] && tiles.charAt(k)==WILDCARD) {
-							marked[k] = true; 
-							buildTiles.append(WILDCARD); 
-						}
+			if (!markedSomething && hasWild){//Attempt to get wildcard
+				for (int k = 0; k < tiles.length(); k++) {
+					if (!marked[k] && tiles.charAt(k)==WILDCARD) {
+						marked[k] = true; 
+						markedSomething=true;
+						buildTiles.append(WILDCARD); 
+						break; 
 					}
 				}
-				else
-					return null; 
 			}
+			if (!markedSomething)
+				return null; 
 		}
 
 		return buildTiles.toString(); 

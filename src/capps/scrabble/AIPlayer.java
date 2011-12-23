@@ -59,7 +59,7 @@ public class AIPlayer {
 		if (!searchedS[r][c]) {
 			String base; 
 			if ((base = getWordStartingHere(b,r,c,d)) != null) {
-				o.println("Base word: " + base); 
+				//o.println("Base word: " + base); 
 				Word w = dict.exactMatch(base); 
 				if (w == null) {
 					o.println("Invalid word on board at (" + r+","+c+")"); 
@@ -121,7 +121,7 @@ public class AIPlayer {
 			d = DIR.E; 
 			String base; 
 			if ((base = getWordStartingHere(b,r,c,d)) != null) {
-				o.println("Base word: " + base); 
+				//o.println("Base word: " + base); 
 				Word w = dict.exactMatch(base); 
 				if (w == null) {
 					o.println("Invalid word on board at (" + r+","+c+")"); 
@@ -213,7 +213,7 @@ public class AIPlayer {
 					if (numTilesReq > numTiles)
 						break; 
 
-					ArrayList<String> substr = getSubstringsOfRack(numTilesReq); 
+					ArrayList<String> substr = rack.getSubstringsOfRack(numTilesReq); 
 					for (String rackStr: substr) {
 						assert(rackStr.length() == numTilesReq); 
 						StringBuffer buildCandStr = new StringBuffer(); 
@@ -278,12 +278,7 @@ public class AIPlayer {
 					if (numTilesReq > numTiles)
 						break; 
 
-					if (numTilesReq == 7 ) {
-						o.println("Tiles required = 7 going E at (" + r + "," + c+"), "
-								+"considering range ("+(-i)+","+j+")"); 
-					}
-
-					ArrayList<String> substr = getSubstringsOfRack(numTilesReq); 
+					ArrayList<String> substr = rack.getSubstringsOfRack(numTilesReq); 
 					for (String rackStr: substr) {
 						assert(rackStr.length() == numTilesReq); 
 						StringBuffer buildCandStr = new StringBuffer(); 
@@ -333,100 +328,6 @@ public class AIPlayer {
 
 	}
 
-	private ArrayList<String> getSubstringsOfRack(int len) {
-		if (len == 0)
-			return null; 
-
-		ArrayList<String> substrings = new ArrayList<String>(); 
-
-		int rackLen = rack.toString().length(); 
-
-		if (len == rackLen){
-			substrings.add(rack.toString());
-			return substrings; 
-		}
-
-		assert(len < rackLen); 
-
-		boolean[] chosen = new boolean[rackLen]; 
-		for (int i =0; i < rackLen; i++)
-			assert (chosen[i] == false); 
-
-		getSubstringsHelper(chosen,rack.toString(),0,len,substrings); 
-		return substrings; 
-	}
-
-	private void getSubstringsHelper
-		(boolean[] chosen, String base, int numChosen, int len, ArrayList<String> addToMe) {
-		if (numChosen == len) {
-			int numChosenWild = 0; 
-			for (int i = 0; i < base.length(); i++) {
-				if (chosen[i] && base.charAt(i)==WILDCARD)
-					numChosenWild++; 
-			}
-			if (numChosenWild == 0) {
-				StringBuilder buildStr = new StringBuilder(); 
-				for (int i = 0; i < base.length(); i++) {
-					if (chosen[i]){
-						buildStr.append(base.charAt(i));
-					}
-				}
-				addToMe.add(buildStr.toString());
-				return; 
-			}
-			else { //Generate many, many strings all possible with wildcard
-				if (numChosenWild == 1) {
-					for (char j = 'A'; j <= 'Z'; j++) {
-
-						StringBuilder buildStr = new StringBuilder(); 
-						for (int i = 0; i < base.length(); i++) {
-							if (chosen[i]){
-								if (base.charAt(i) == WILDCARD) {
-									buildStr.append(j); 
-								}
-								else {
-									buildStr.append(base.charAt(i));
-								}
-							}
-						}
-						addToMe.add(buildStr.toString());
-					}
-				}
-				else if (numChosenWild == 2) {
-					for (char j = 'A'; j <= 'Z'; j++) {
-						for (char k = 'A'; k <= 'Z'; k++) {
-							int wildNum = 0; 
-
-							StringBuilder buildStr = new StringBuilder(); 
-							for (int i = 0; i < base.length(); i++) {
-								if (chosen[i]){
-									if (base.charAt(i) == WILDCARD) {
-										buildStr.append(wildNum==0?j:k);
-										if (wildNum==0)
-											wildNum++; 
-									}
-									else {
-										buildStr.append(base.charAt(i));
-									}
-								}
-							}
-							addToMe.add(buildStr.toString());
-						}
-					}
-				}
-				return; 
-			}
-		}
-		
-		for (int i = 0; i < base.length(); i++) {
-			if (!chosen[i]) {
-				chosen[i] = true;
-				getSubstringsHelper(chosen,base,numChosen+1,len,addToMe);
-				chosen[i] = false; 
-			}
-		}
-
-	}
 
 	public String getWordStartingHere(Square[][] b, int r, int c, DIR d) {
 		if (d == DIR.S) {
@@ -435,7 +336,7 @@ public class AIPlayer {
 			String southerly = ""; 
 
 			int i =0; 
-			while (r < ROWS && b[r+i][c].getLetter() != EMPTY) {
+			while (r+i < ROWS && b[r+i][c].getLetter() != EMPTY) {
 				southerly += b[r+i][c].getLetter(); 
 				i++; 
 			}
@@ -449,7 +350,7 @@ public class AIPlayer {
 			String easterly = ""; 
 
 			int i =0; 
-			while (b[r][c+i].getLetter() != EMPTY) {
+			while (c+i < COLS && b[r][c+i].getLetter() != EMPTY) {
 				easterly += b[r][c+i].getLetter(); 
 				i++; 
 			}
