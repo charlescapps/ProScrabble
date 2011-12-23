@@ -62,6 +62,7 @@ public class PlayScrabble {
 					case DISPLAY: 
 						o.println(sb); 
 						o.println("Your rack: \"" + ai.getRack().toString() + "\""); 
+						o.println("Your total score: " + ai.getTotalScore()); 
 						o.println(); 
 						break;
 					case END_GAME: 
@@ -81,11 +82,13 @@ public class PlayScrabble {
 	private void giveTiles() throws IOException{
 		o.println("Enter tiles to add to your rack:"); 
 		String t = in.readLine(); 
+		o.println(); 
 		try {
 			ai.addTiles(t); 
 		}
 		catch (ScrabbleException e) {
 			o.println("Exception occurred getting tiles. Returning to menu."); 
+			o.println(); 
 			return; 
 		}
 	}
@@ -103,9 +106,10 @@ public class PlayScrabble {
 				opMove = inputMove(); 
 			}
 
-			o.println("Are you sure this is correct? (Y/N)"); 
 			o.println(opMove); 
+			o.print("Are you sure this is correct? (Y/N) "); 
 			String s = in.readLine(); 
+			o.println(); 
 			if (s.equals("Y") || s.equals("y"))
 				areYouSure = true;
 
@@ -131,9 +135,10 @@ public class PlayScrabble {
 				manMove = inputMove(); 
 			}
 
-			o.println("Are you sure this is correct? (Y/N)"); 
 			o.println(manMove); 
+			o.print("Are you sure this is correct? (Y/N) "); 
 			String s = in.readLine(); 
+			o.println(); 
 			if (s.equals("Y") || s.equals("y"))
 				areYouSure = true;
 
@@ -175,8 +180,9 @@ public class PlayScrabble {
 		o.println("Your best move is " + bestMove.score + " points!"); 
 		o.println(bestMove.move); 
 		o.println(); 
-		o.println("Play this move? (Y/N)"); 
+		o.print("Play this move? (Y/N)"); 
 		String s = in.readLine(); 
+		o.println(); 
 		if (s.equals("Y") || s.equals("y")) {
 			try {
 			ai.playMove(sb, bestMove.move); 
@@ -207,7 +213,6 @@ public class PlayScrabble {
 		o.print("Enter move row>"); 
 		String s = in.readLine(); 
 		r = Integer.parseInt(s); 
-		o.println(); 
 
 		o.print("Enter move col>"); 
 		s = in.readLine(); 
@@ -216,7 +221,6 @@ public class PlayScrabble {
 
 		o.print("Enter play>"); 
 		play  = in.readLine(); 
-		o.println(); 
 
 		o.print("Enter tiles used>"); 
 		tilesUsed = in.readLine(); 
@@ -249,6 +253,7 @@ public class PlayScrabble {
 
 		o.print("ENTER OPTION>"); 
 		String choice = in.readLine(); 
+		o.println(); 
 
 		int val; 
 

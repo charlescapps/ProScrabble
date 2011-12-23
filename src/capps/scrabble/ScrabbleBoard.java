@@ -61,15 +61,20 @@ public class ScrabbleBoard{
 	public int makeMove(ScrabbleMove m) {
 		int r = m.row, c = m.col, score = computeScore(m); 
 
+		int rackIndex = 0; 
 		for (int i = 0; i < m.play.length(); i++) {
 			if (m.dir == DIR.S) {
 				if (sBoard[r+i][c].getLetter()==EMPTY) {
 					sBoard[r+i][c].setLetter(m.play.charAt(i)); 
+					if (m.tilesUsed.charAt(rackIndex++) == WILDCARD)
+						sBoard[r+i][c].setIsBlank(true); 
 				}
 			}
 			else {
 				if (sBoard[r][c+i].getLetter()==EMPTY) {
 					sBoard[r][c+i].setLetter(m.play.charAt(i)); 
+					if (m.tilesUsed.charAt(rackIndex++) == WILDCARD)
+						sBoard[r][c+i].setIsBlank(true); 
 				}
 			}
 		}
@@ -124,11 +129,8 @@ public class ScrabbleBoard{
 	}
 
 	public int oneWordScore(ScrabbleMove m) {
-		//o.println("Computing score of move:"); 
-		//o.println(m); 
-		int r = m.row, c = m.col, score = 0, wordMult = 1; 
+		int r = m.row, c = m.col, score = 0, wordMult = 1, tilesIndex = 0; 
 
-		int tilesIndex = 0; 
 		for (int i = 0; i < m.play.length(); i++) {
 			if (m.dir == DIR.S) {
 				assert (r+i < ROWS); 
@@ -139,8 +141,9 @@ public class ScrabbleBoard{
 					wordMult *= sBoard[r+i][c].wordMult; 
 				}
 				//If the board wasn't empty, we don't get the letter/word bonuses
+				//If a blank was on the board, we also don't get any points
 				else {
-					score += tileVal(sBoard[r+i][c].getLetter());
+					score += (sBoard[r+i][c].isBlank() ? 0 : tileVal(sBoard[r+i][c].getLetter()));
 				}
 			}
 			else {
@@ -153,7 +156,7 @@ public class ScrabbleBoard{
 				}
 				//If the board wasn't empty, we don't get the letter/word bonuses
 				else {
-					score += tileVal(sBoard[r][c+i].getLetter());
+					score += (sBoard[r][c+i].isBlank() ? 0 : tileVal(sBoard[r][c+i].getLetter()));
 				}
 			}
 		}
@@ -270,6 +273,20 @@ public class ScrabbleBoard{
 			return false; 
 
 		if (m.dir == DIR.E && (m.col + len > COLS))
+			return false; 
+
+		//A play is always the start of a word, so can't have anything behind it
+		//in the direction of play
+		if (m.dir == DIR.S && m.row > 0 && sBoard[m.row-1][m.col].getLetter() != EMPTY)
+			return false; 
+		if (m.dir == DIR.E && m.col > 0 && sBoard[m.row][m.col-1].getLetter() != EMPTY)
+			return false; 
+
+		//A play also can't have anything following it, because the play
+		//*is* the whole word starting at that position by definition
+		if (m.dir == DIR.S && (m.row + len < ROWS) && sBoard[m.row+len][m.col].getLetter() != EMPTY)
+			return false; 
+		if (m.dir == DIR.E && (m.col + len < COLS) && sBoard[m.row][m.col+len].getLetter() != EMPTY)
 			return false; 
 
 		boolean nextToSomething = false; 
