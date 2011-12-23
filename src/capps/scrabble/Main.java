@@ -31,11 +31,13 @@ public class Main {
 			System.exit(1); 
 		}
 
+
 		layoutFile = new BufferedReader(new FileReader(args[0])); 
 
 		FileInputStream fis = new FileInputStream(args[1]); 
 		ObjectInputStream ois = new ObjectInputStream(fis); 
 
+		o.println();
 		o.println("Please be patient. It takes 1-2 minutes to load the hash table."); 
 		o.println(); 
 

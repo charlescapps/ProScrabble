@@ -39,7 +39,7 @@ public class PlayScrabble {
 			o.println(e.getMessage()); 
 			getInitialPlayer(); 
 		}
-		o.println(); 
+//		o.println(); 
 	}
 
 	private void gameLoop() {

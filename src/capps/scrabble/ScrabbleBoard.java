@@ -236,15 +236,26 @@ public class ScrabbleBoard{
 		final String noTile = "\u2591"; 
 
 		StringBuffer sb = new StringBuffer(); 
-		sb.append("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 " + NL); 
+		//sb.append("                       1 1 1 1 1 " + NL); 
+		//sb.append("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 " + NL); 
+		sb.append("   ");
+		//Put circled numbers on top
+		for (int i = 0; i < 15; i++) {
+			sb.append((char)(0x2460 + i));
+			sb.append(" "); 
+		}
+		sb.append(NL); 
+
 		sb.append("  " + topLeft); 
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 29; i++) {
 			sb.append(horiBorder); 
 		}
 		sb.append(topRight + NL); 
 
 		for (int i = 0; i < ROWS; i++) {
-			sb.append( (i % 10) + " " + vertBorder); 
+			sb.append((char)(0x2460+i)); 
+			sb.append(" " + vertBorder);
+
 			for (int j = 0; j < COLS; j++) {
 				char letter = sBoard[i][j].getLetter(); 
 				if (letter == EMPTY) {
@@ -262,14 +273,15 @@ public class ScrabbleBoard{
 				else {
 					sb.append(sBoard[i][j].getLetter()); 
 				}
-				sb.append(' '); 
+				if (j < 14)
+					sb.append(' '); 
 			}
 			sb.append(vertBorder); 
 			sb.append(NL); 
 		}
 
 		sb.append("  " + bottomLeft); 
-		for (int i = 0; i < 30; i++) 
+		for (int i = 0; i < 29; i++) 
 			sb.append(horiBorder); 
 		sb.append(bottomRight+ NL); 
 
