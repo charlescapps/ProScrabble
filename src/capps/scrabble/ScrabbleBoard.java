@@ -10,10 +10,12 @@ public class ScrabbleBoard{
 
 	private Square[][] sBoard; 
 	private ScrabbleDict dict; 
+	private boolean isFirstMove; 
 
 	public ScrabbleBoard(BufferedReader layoutFile, ScrabbleDict dict) throws IOException{
 
 		this.dict = dict; 
+		this.isFirstMove = true; 
 
 		//Strings in the text file giving the board layout
 		final String doubleLett = "DL"; 
@@ -72,7 +74,12 @@ public class ScrabbleBoard{
 			}
 		}
 
+		isFirstMove = false; 
 		return score; 
+	}
+
+	public boolean isFirstMove() {
+		return isFirstMove; 
 	}
 
 	public int computeScore(ScrabbleMove m) {
@@ -214,10 +221,10 @@ public class ScrabbleBoard{
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(); 
-		sb.append("  0 1 2 3 4 5 6 7 8 9 1011121314" + NL); 
+		sb.append("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4" + NL); 
 
 		for (int i = 0; i < ROWS; i++) {
-			sb.append(i < 10 ? i + " " : i); 
+			sb.append( (i % 10) + " "); 
 			for (int j = 0; j < COLS; j++) {
 				sb.append(sBoard[i][j].getLetter()); 
 				sb.append(' '); 

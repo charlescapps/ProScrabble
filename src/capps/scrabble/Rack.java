@@ -123,6 +123,14 @@ public class Rack {
 			throw new ScrabbleException("Too many tiles given to add"); 
 
 		tiles = (tiles + toAdd).toUpperCase(); 
+
+		numWild = 0;
+		for (int i = 0; i < tiles.length(); i++){ 
+			if (tiles.charAt(i)==WILDCARD)
+				numWild++; 
+		}
+
+		substrByLen = new ArrayList<ArrayList<String>>(); 
 	}
 
 	public void removeTiles (String toRemove) throws ScrabbleException {
@@ -155,6 +163,13 @@ public class Rack {
 				newTiles.append(tiles.charAt(i)); 
 		}
 		tiles = newTiles.toString(); 	
+
+		numWild = 0;
+		for (int i = 0; i < tiles.length(); i++){ 
+			if (tiles.charAt(i)==WILDCARD)
+				numWild++; 
+		}
+		substrByLen = new ArrayList<ArrayList<String>>(); 
 	}
 
 }

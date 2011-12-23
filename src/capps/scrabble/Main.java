@@ -42,10 +42,52 @@ public class Main {
 		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
 		sBoard = new ScrabbleBoard(layoutFile, dict); 
 		
-		testMove(); 
-		testBestScores(); 
+		//testMove(); 
+		//testBestScores(); 
 		//testSubstrings(); 
+		//testFirstMove(); 
+		
+		PlayScrabble play = new PlayScrabble(sBoard, dict); 
+		play.startGame(); 
 	}
+
+	public static void testFirstMove() throws ScrabbleException {
+
+		//Shouldn't find a move
+		AIPlayer p1 = new AIPlayer("JJJJJJJ",dict); 
+		o.println("Computing best move with rack JJJJJJJ"); 
+
+		MoveScore best = p1.getBestMove(sBoard); 
+
+		if (best == null) {
+			o.println("NO MOVE FOUND!"); 
+		}
+		else {
+			o.println("Best Score:" + best.score); 
+			o.println("Best Move:"); 
+			o.println(best.move); 
+			p1.playMove(sBoard,best.move); 
+			o.println(sBoard); 
+		}
+
+		//Should properly find first move at center
+		AIPlayer p2 = new AIPlayer("JAXEWQ*",dict); 
+		o.println("Computing best move with rack JAXEWQ*"); 
+
+		best = p2.getBestMove(sBoard); 
+
+		if (best == null) {
+			o.println("NO MOVE FOUND!"); 
+		}
+		else {
+			o.println("Best Score:" + best.score); 
+			o.println("Best Move:"); 
+			o.println(best.move); 
+			p2.playMove(sBoard,best.move); 
+			o.println(sBoard); 
+		}
+	}
+
 
 	public static void testSubstrings() throws ScrabbleException{
 		Rack r = new Rack("ABDXQEE"); 

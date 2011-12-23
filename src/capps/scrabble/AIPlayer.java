@@ -7,15 +7,30 @@ import java.util.ArrayList;
 public class AIPlayer {
 	private Rack rack;
 	private ScrabbleDict dict;
+	private int totalScore; 
 
 	public AIPlayer(String initialTiles, ScrabbleDict dict) 
 			throws ScrabbleException {
-		rack = new Rack(initialTiles);
+		this.rack = new Rack(initialTiles);
 		this.dict = dict; 
+		this.totalScore = 0; 
+	}
+
+	public int getTotalScore() {
+		return totalScore; 
+	}
+
+	public Rack getRack() {
+		return rack; 
 	}
 
 	public MoveScore getBestMove(ScrabbleBoard b) throws ScrabbleException{
 		Square[][] board = b.getBoardCopy(); 
+
+		if (b.isFirstMove()) {
+			return getBestFirstMove(b, board); 
+		}
+
 		MoveScore bestSoFar = null;
 		MoveScore tmpMoveScore = null; 
 		boolean[][] searchedS=new boolean[ROWS][COLS]; 
@@ -35,6 +50,45 @@ public class AIPlayer {
 
 		return bestSoFar; 
 		
+	}
+
+	public MoveScore getBestFirstMove(ScrabbleBoard sb, Square[][] b) {
+		
+		assert (rack.toString().length() == 7); 
+
+		final int center = 7;
+		ScrabbleMove bestMoveSoFar=null; 
+		int bestScoreSoFar=0; 
+
+		//Just try vertical since the board is symmetric rotated 90 degrees
+		for (int r = center - 6; r <= center; r++) {
+			int MIN_LEN = center - r + 1; 
+			for (int l = MIN_LEN; l <= 7; l++) {
+				ArrayList<String> substrings = rack.getSubstringsOfRack(l); 
+				for (String sub: substrings) {
+					ArrayList<String> matches = dict.getAnagrams(sub); 
+					if (matches == null) 
+						continue; 
+
+					for (String m: matches) {
+						ScrabbleMove move 
+							= new ScrabbleMove(r, r+l-1, m, rack.hasTiles(m), DIR.S); 
+
+						if (sb.isValidMove(move) ) {
+							int score = sb.computeScore(move); 
+							if (bestMoveSoFar == null || bestScoreSoFar < score){
+								bestMoveSoFar = move; 
+								bestScoreSoFar = score; 
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (bestMoveSoFar == null)
+			return null; 
+		return new MoveScore(bestMoveSoFar,bestScoreSoFar); 
 	}
 
 	//r and c start on a non-empty square. 
@@ -251,22 +305,17 @@ public class AIPlayer {
 							}
 
 							String grabTiles = rack.hasTiles(rackStrInOrder.toString()); 
-							if (grabTiles.length() != rackStr.length()) {
-								o.println("Grabbed tiles: \"" + grabTiles); 
-								o.println("Needed string: \"" + rackStr); 
-							}
-							if (r ==11 && c == 14) {
-								o.println("Match lined up: " + m); 
-								o.println("rack str: " + rackStr); 
-								o.println("In order: " + rackStrInOrder); 
-								o.println("Grabbed: " + grabTiles); 
+							if (grabTiles == null) {
+								o.println("Didn't have tiles '" + rackStrInOrder.toString() + "'"); 
+								o.println("Tried to play word '" + m + "'"); 
 								o.println(); 
+								continue; 
 							}
 
 							ScrabbleMove move = new ScrabbleMove(r-i,c,m,grabTiles,DIR.S);
 							if (sb.isValidMove(move)){
-								o.println("Valid move found:\n" + move);
-								o.println(); 
+								//o.println("Valid move found:\n" + move);
+								//o.println(); 
 								moves.add(move); 
 							}
 						}
@@ -327,6 +376,12 @@ public class AIPlayer {
 							}
 
 							String grabTiles = rack.hasTiles(rackStrInOrder.toString()); 
+							if (grabTiles == null) {
+								o.println("Didn't have tiles '" + rackStrInOrder.toString() + "'"); 
+								o.println("Tried to play word '" + m + "'"); 
+								o.println(); 
+								continue; 
+							}
 							ScrabbleMove move = new ScrabbleMove(r,c-i,m,grabTiles,DIR.E);
 							if (sb.isValidMove(move)) {
 								if (grabTiles.equals("")){
@@ -383,7 +438,9 @@ public class AIPlayer {
 	public int playMove(ScrabbleBoard b, ScrabbleMove m) 
 			throws ScrabbleException {
 		rack.removeTiles(m.tilesUsed); 
-		return b.makeMove(m); 
+		int score = b.makeMove(m); 
+		totalScore += score; 
+		return score; 
 	}
 
 	public void addTiles(String t) throws ScrabbleException {
