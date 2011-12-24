@@ -151,7 +151,7 @@ public class ScrabbleBoard{
 				//If the board was empty there, score is value of tile to be played,
 				//and we get the letter bonuses/word bonuses
 				if (sBoard[r][c+i].getLetter()==EMPTY) { 
-					score += tileVal(m.play.charAt(i))*sBoard[r][c+i].letterMult;
+					score += tileVal(m.tilesUsed.charAt(tilesIndex++))*sBoard[r][c+i].letterMult;
 					wordMult *= sBoard[r][c+i].wordMult; 
 				}
 				//If the board wasn't empty, we don't get the letter/word bonuses
