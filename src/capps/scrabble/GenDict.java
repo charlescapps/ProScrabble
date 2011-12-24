@@ -12,7 +12,7 @@ import java.io.ObjectOutputStream;
 public class GenDict {
 
 	private static final String USAGE 
-		= "java -jar gendict.jar <dict_file> <dump_dict_file> <dump_text>"; 
+		= "java -jar gendict.jar <input_dict_textfile> <output_obj_file> <output_txt_file>"; 
 
 	public static void main (String [] args) 
 		throws FileNotFoundException, IOException 
