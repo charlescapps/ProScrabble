@@ -8,7 +8,8 @@ import static capps.scrabble.ScrabbleConstants.*;
 
 public class PlayScrabble {
 	private static enum MENU_CHOICE 
-		{PLAY_OPPONENT_MOVE, MANUAL_MOVE, GET_BEST_MOVE, GIVE_TILES, DISPLAY, END_GAME}; 
+		{PLAY_OPPONENT_MOVE, MANUAL_MOVE, GET_BEST_MOVE, GIVE_TILES, 
+			REMOVE_TILES, FORCE_MOVE, UNDO, DISPLAY, ADD_TO_DICT, END_GAME}; 
 
 	private AIPlayer ai; 
 	private ScrabbleBoard sb; 
@@ -58,8 +59,17 @@ public class PlayScrabble {
 					case GET_BEST_MOVE: 
 						getBestMove(); 
 						break; 
+					case FORCE_MOVE:
+						forceMove();
+						break; 
+					case UNDO: 
+						undoMove(); 
+						break;
 					case GIVE_TILES: 
 						giveTiles(); 
+						break; 
+					case REMOVE_TILES: 
+						removeTiles(); 
 						break; 
 					case DISPLAY: 
 						o.println(sb); 
@@ -67,6 +77,9 @@ public class PlayScrabble {
 						o.println("Your total score: " + ai.getTotalScore()); 
 						o.println(); 
 						break;
+					case ADD_TO_DICT: 
+						addToDict(); 
+						break; 
 					case END_GAME: 
 						endGame(); 
 						break; 
@@ -98,6 +111,20 @@ public class PlayScrabble {
 		o.println(); 
 	}
 
+	private void removeTiles() throws IOException{
+		o.print("Enter tiles to remove>"); 
+		String s = in.readLine(); 
+		o.println(); 
+
+		try {
+			ai.getRack().removeTiles(s); 
+		}
+		catch (ScrabbleException e) {
+			o.println("Invalid tiles chosen to remove. Returning to menu."); 
+			o.println(); 
+		}
+	}
+
 	private void playOpponentMove() throws IOException {
 		boolean areYouSure = false; 
 		ScrabbleMove opMove; 
@@ -106,9 +133,14 @@ public class PlayScrabble {
 			o.println("Enter the opponent's move:"); 
 			opMove = inputMove(); 
 
-			while (!sb.isValidMove(opMove)) {
-				o.println("Move isn't valid. Enter another move."); 
-				opMove = inputMove(); 
+			while (opMove == null || !sb.isValidMove(opMove)) {
+				o.print("Move isn't valid. Enter another move? (Y/N)."); 
+				String s = in.readLine(); 
+				if (s.equals("Y") || s.equals("y")) {
+					opMove = inputMove(); 
+				}
+				else
+					return; 
 			}
 
 			o.println(opMove); 
@@ -135,7 +167,7 @@ public class PlayScrabble {
 			o.println("Enter a manual move:"); 
 			manMove = inputMove(); 
 
-			while (!sb.isValidMove(manMove)) {
+			while (manMove == null || !sb.isValidMove(manMove)) {
 				o.println("Move isn't valid. Enter another move."); 
 				manMove = inputMove(); 
 			}
@@ -206,6 +238,53 @@ public class PlayScrabble {
 		}
 	}
 
+	private void forceMove() throws IOException{
+		ScrabbleMove forcedMove = inputMove(); 
+		if (forcedMove == null) {
+			o.println("Invalid move entered. Returning to menu."); 
+			o.println(); 
+			return; 
+		}
+		o.println("Move to force:"); 
+		o.println(forcedMove); 
+		o.println(); 
+		o.print("Is this correct? (Y/N)");
+		String s = in.readLine(); 
+		if (s.equals("y") || s.equals("Y"))
+			sb.forceMove(forcedMove); 
+		else 
+			o.println("Returning to menu."); 
+		o.println(); 
+	}
+
+	private void undoMove() throws IOException{
+		o.print("Are you sure you want to undo a move? (Y/N)");
+		String s = in.readLine(); 
+
+		if (s.equals("Y") || s.equals("y"))
+			sb.undoMove(); 
+
+		o.println(); 
+	}
+
+	private void addToDict() throws IOException {
+		o.print("Enter a word to add to dictionary>");
+		String word = in.readLine(); 
+
+		o.println();
+		o.print("Are you sure you want to add word \"" + word + "\"? (Y/N)"); 
+		String s = in.readLine(); 
+
+		if (s.equals("Y") || s.equals("y")) {
+			dict.addToDict(word); 
+		}
+		else {
+			o.println("Aborting. Returning to menu."); 
+			o.println(); 
+		}
+
+	}
+
 	private void endGame() {
 		o.println("Ending game. Your total score was " + ai.getTotalScore()); 
 		o.println(); 
@@ -213,23 +292,30 @@ public class PlayScrabble {
 
 	private static ScrabbleMove inputMove() throws IOException{
 		int r,c; 
-		String play, tilesUsed; 
+		String play, tilesUsed, s; 
 		DIR d; 
 
-		o.print("Enter move row>"); 
-		String s = in.readLine(); 
-		r = Integer.parseInt(s); 
+		try {
+			o.print("Enter move row>"); 
+			s = in.readLine(); 
+			r = Integer.parseInt(s); 
 
-		o.print("Enter move col>"); 
-		s = in.readLine(); 
-		c = Integer.parseInt(s); 
-		o.println(); 
+			o.print("Enter move col>"); 
+			s = in.readLine(); 
+			c = Integer.parseInt(s); 
+			o.println();
+		}
+		catch (NumberFormatException e) {
+			o.println("Invalid number entered. Returning to menu."); 
+			o.println(); 
+			return null; 
+		}
 
 		o.print("Enter play>"); 
-		play  = in.readLine(); 
+		play  = in.readLine().toUpperCase(); 
 
 		o.print("Enter tiles used>"); 
-		tilesUsed = in.readLine(); 
+		tilesUsed = in.readLine().toUpperCase(); 
 		o.println(); 
 
 		o.print("Enter direction (S | E)>");
@@ -238,6 +324,21 @@ public class PlayScrabble {
 			d = DIR.S; 
 		else
 			d = DIR.E; 
+
+		for (int i = 0 ; i < play.length(); i++) {
+			if (play.charAt(i) < 'A' || play.charAt(i) > 'Z'){
+				o.println("Invalid character in play: '" + play.charAt(i) + "'"); 
+				o.println("Returning to menu."); 
+				o.println(); 
+				return null; 
+			}
+			if (i < tilesUsed.length() && tilesUsed.charAt(i) < 'A' && tilesUsed.charAt(i) > 'Z' && tilesUsed.charAt(i) != WILDCARD){
+				o.println("Invalid character in tiles used: '" + tilesUsed.charAt(i) + "'"); 
+				o.println("Returning to menu."); 
+				o.println(); 
+				return null; 
+			}
+		}
 
 		ScrabbleMove opMove = new ScrabbleMove(r,c,play,tilesUsed,d); 
 
@@ -252,10 +353,14 @@ public class PlayScrabble {
 		o.println("Scrabble Player Options: "); 
 		o.println("\t1) Play opponent's move"); 
 		o.println("\t2) Play manual move"); 
-		o.println("\t3) Get best move"); 
-		o.println("\t4) Get tiles"); 
-		o.println("\t5) Display board"); 
-		o.println("\t6) End Game"); 
+		o.println("\t3) Play best move"); 
+		o.println("\t4) Force a move"); 
+		o.println("\t5) Undo previous move"); 
+		o.println("\t6) Add tiles"); 
+		o.println("\t7) Remove tiles"); 
+		o.println("\t8) Display board"); 
+		o.println("\t9) Add word to dictionary"); 
+		o.println("\t10) End Game"); 
 
 		o.print("ENTER OPTION>"); 
 		String choice = in.readLine(); 
@@ -280,10 +385,18 @@ public class PlayScrabble {
 			case 3: 
 				return MENU_CHOICE.GET_BEST_MOVE; 
 			case 4:
-				return MENU_CHOICE.GIVE_TILES; 
+				return MENU_CHOICE.FORCE_MOVE; 
 			case 5:
-				return MENU_CHOICE.DISPLAY; 
+				return MENU_CHOICE.UNDO;
 			case 6:
+				return MENU_CHOICE.GIVE_TILES; 
+			case 7:
+				return MENU_CHOICE.REMOVE_TILES;
+			case 8:
+				return MENU_CHOICE.DISPLAY; 
+			case 9:
+				return MENU_CHOICE.ADD_TO_DICT; 
+			case 10:
 				return MENU_CHOICE.END_GAME; 
 			default: 
 				o.println("Invalid choice. Displaying menu again."); 

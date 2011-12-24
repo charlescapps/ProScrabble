@@ -141,5 +141,31 @@ public class ScrabbleDict implements java.io.Serializable {
 		return hashVal; 
 	}
 
+	public void addToDict(String s) {
+		if (inDict(s.toUpperCase())) {
+			System.out.println("Word \"" + s + "\" already in dictionary."); 
+			return; 
+		}
+		s = s.toUpperCase(); 
+		Word newWord = new Word(s); 
+		WordBucket bucket = getMatches(s); 
+		bucket.add(newWord); 
+
+		for (Word w: lexiDict) {
+			if (w.toString().endsWith(s) && !w.strEquals(s)) {
+				newWord.addPrefix(w); 
+			}
+			else if (s.startsWith(w.toString()) && !w.strEquals(s)) {
+				w.addSuffix(newWord); 
+			}
+			else if (s.endsWith(w.toString()) && !w.strEquals(s)) {
+				w.addPrefix(newWord); 	
+			}
+			else if (w.toString().startsWith(s) && !w.strEquals(s)) {
+				newWord.addSuffix(w); 
+			}
+		}
+	}
+
 
 }

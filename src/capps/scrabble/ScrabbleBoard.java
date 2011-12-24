@@ -9,13 +9,12 @@ public class ScrabbleBoard{
 
 
 	private Square[][] sBoard; 
+	private Square[][] prevBoard; 
 	private ScrabbleDict dict; 
-	private boolean isFirstMove; 
 
 	public ScrabbleBoard(BufferedReader layoutFile, ScrabbleDict dict) throws IOException{
 
 		this.dict = dict; 
-		this.isFirstMove = true; 
 
 		//Strings in the text file giving the board layout
 		final String doubleLett = "DL"; 
@@ -25,6 +24,7 @@ public class ScrabbleBoard{
 		final String fileBlank = "B"; 
 
 		sBoard = new Square[ROWS][COLS]; 
+		prevBoard = null; 
 
 		String line; 
 		int r=0, c=0; 
@@ -59,6 +59,7 @@ public class ScrabbleBoard{
 
 	//Returns point value of move
 	public int makeMove(ScrabbleMove m) {
+		prevBoard = getBoardCopy(); 
 		int r = m.row, c = m.col, score = computeScore(m); 
 
 		int rackIndex = 0; 
@@ -79,12 +80,47 @@ public class ScrabbleBoard{
 			}
 		}
 
-		isFirstMove = false; 
 		return score; 
 	}
 
+	public void forceMove(ScrabbleMove m) {
+		prevBoard = getBoardCopy(); 
+		int r = m.row, c = m.col; 
+
+		int rackIndex = 0; 
+		for (int i = 0; i < m.play.length(); i++) {
+			if (m.dir == DIR.S) {
+				if (sBoard[r+i][c].getLetter()==EMPTY) {
+					sBoard[r+i][c].setLetter(m.play.charAt(i)); 
+					if (m.tilesUsed.charAt(rackIndex++) == WILDCARD)
+						sBoard[r+i][c].setIsBlank(true); 
+				}
+			}
+			else {
+				if (sBoard[r][c+i].getLetter()==EMPTY) {
+					sBoard[r][c+i].setLetter(m.play.charAt(i)); 
+					if (m.tilesUsed.charAt(rackIndex++) == WILDCARD)
+						sBoard[r][c+i].setIsBlank(true); 
+				}
+			}
+		}
+
+		return; 
+
+	}
+
+	public void undoMove() {
+		if (prevBoard == null) 
+			o.println("No previous move to undo.");
+		else {
+			sBoard = prevBoard;
+			prevBoard = null; 
+		}
+			
+	}
+
 	public boolean isFirstMove() {
-		return isFirstMove; 
+		return sBoard[7][7].getLetter()==EMPTY; 
 	}
 
 	public int computeScore(ScrabbleMove m) {
