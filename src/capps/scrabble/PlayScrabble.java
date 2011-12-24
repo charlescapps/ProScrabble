@@ -31,14 +31,19 @@ public class PlayScrabble {
 
 	private void getInitialPlayer() throws IOException{
 		
-		o.print("Enter initial rack>"); 
-		try {
-			ai = new AIPlayer(in.readLine(), dict); 
-		}
-		catch (ScrabbleException e) {
-			o.println("Invalid initial rack. Try again!"); 
-			o.println(e.getMessage()); 
-			getInitialPlayer(); 
+		boolean wasValid = false; 
+		while (!wasValid) {
+			o.print("Enter initial rack>"); 
+			try {
+				ai = new AIPlayer(in.readLine(), dict); 
+				wasValid = true; 
+			}
+			catch (ScrabbleException e) {
+				o.println("Invalid initial rack. Try again!"); 
+				o.println(e.getMessage()); 
+				o.println(); 
+				wasValid = false; 
+			}
 		}
 		o.println(); 
 	}
@@ -325,22 +330,12 @@ public class PlayScrabble {
 		else
 			d = DIR.E; 
 
-		for (int i = 0 ; i < play.length(); i++) {
-			if (play.charAt(i) < 'A' || play.charAt(i) > 'Z'){
-				o.println("Invalid character in play: '" + play.charAt(i) + "'"); 
-				o.println("Returning to menu."); 
-				o.println(); 
-				return null; 
-			}
-			if (i < tilesUsed.length() && tilesUsed.charAt(i) < 'A' && tilesUsed.charAt(i) > 'Z' && tilesUsed.charAt(i) != WILDCARD){
-				o.println("Invalid character in tiles used: '" + tilesUsed.charAt(i) + "'"); 
-				o.println("Returning to menu."); 
-				o.println(); 
-				return null; 
-			}
-		}
-
 		ScrabbleMove opMove = new ScrabbleMove(r,c,play,tilesUsed,d); 
+		if (!ScrabbleMove.isValidMove(opMove)){
+			o.println("Invalid move entered. Returning to menu."); 
+			o.println(); 
+			return null; 
+		}
 
 		o.println("You entered move:"); 
 		o.println(opMove); 

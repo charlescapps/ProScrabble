@@ -16,6 +16,11 @@ public class Rack {
 		if (tiles.length() != 7) 
 			throw new ScrabbleException("Initial tiles not size 7!"); 
 
+		for (int i = 0; i < tiles.length(); i++) {
+			if ( (tiles.charAt(i) < 'A' || tiles.charAt(i) > 'Z') && tiles.charAt(i) != WILDCARD)
+				throw new ScrabbleException("Tiles contain invalid letter: '" + tiles.charAt(i) + "'"); 
+		}
+
 		substrByLen = new ArrayList<ArrayList<String>>(); 
 		numWild = 0;
 		for (int i = 0; i < tiles.length(); i++){ 
@@ -139,6 +144,7 @@ public class Rack {
 		if (toRemove.length() > tiles.length()) {
 			throw new ScrabbleException("Too many tiles given to remove"); 
 		}
+		toRemove = toRemove.toUpperCase(); 
 
 		boolean[] markedToRemove = new boolean[tiles.length()]; 
 

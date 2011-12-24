@@ -5,11 +5,10 @@ import static capps.scrabble.ScrabbleConstants.*;
 import java.io.BufferedReader; 
 import java.io.IOException; 
 
-public class ScrabbleBoard{
-
+public class ScrabbleBoard implements Cloneable{
 
 	private Square[][] sBoard; 
-	private Square[][] prevBoard; 
+	private ScrabbleBoard previous; //Implicit linked-list of previous states =) 
 	private ScrabbleDict dict; 
 
 	public ScrabbleBoard(BufferedReader layoutFile, ScrabbleDict dict) throws IOException{
@@ -24,7 +23,7 @@ public class ScrabbleBoard{
 		final String fileBlank = "B"; 
 
 		sBoard = new Square[ROWS][COLS]; 
-		prevBoard = null; 
+		previous = null; 
 
 		String line; 
 		int r=0, c=0; 
@@ -57,9 +56,23 @@ public class ScrabbleBoard{
 
 	}
 
+	public ScrabbleBoard(ScrabbleBoard toCopy) {
+		if (toCopy != null) {
+			this.sBoard = toCopy.getBoardCopy();
+			this.previous=toCopy.previous; 
+			this.dict=toCopy.dict;
+		}
+	}
+
+	@Override
+	public Object clone() {
+		return new ScrabbleBoard(this); 
+	}
+
 	//Returns point value of move
 	public int makeMove(ScrabbleMove m) {
-		prevBoard = getBoardCopy(); 
+		this.previous = (ScrabbleBoard)this.clone(); 
+
 		int r = m.row, c = m.col, score = computeScore(m); 
 
 		int rackIndex = 0; 
@@ -84,7 +97,7 @@ public class ScrabbleBoard{
 	}
 
 	public void forceMove(ScrabbleMove m) {
-		prevBoard = getBoardCopy(); 
+		this.previous=(ScrabbleBoard)this.clone(); 
 		int r = m.row, c = m.col; 
 
 		int rackIndex = 0; 
@@ -110,11 +123,11 @@ public class ScrabbleBoard{
 	}
 
 	public void undoMove() {
-		if (prevBoard == null) 
+		if (previous == null) 
 			o.println("No previous move to undo.");
 		else {
-			sBoard = prevBoard;
-			prevBoard = null; 
+			this.sBoard = previous.sBoard;
+			this.previous = previous.previous; 
 		}
 			
 	}
