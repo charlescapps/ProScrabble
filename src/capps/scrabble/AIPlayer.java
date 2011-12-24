@@ -1,4 +1,4 @@
-package capps.scrabble; 
+package capps.scrabble;  
 
 import static capps.scrabble.ScrabbleConstants.*; 
 
@@ -35,6 +35,7 @@ public class AIPlayer {
 		MoveScore tmpMoveScore = null; 
 		boolean[][] searchedS=new boolean[ROWS][COLS]; 
 		boolean[][] searchedE=new boolean[ROWS][COLS]; 
+		DIR parallelDir = null;
 
 		for (int i = 0; i < ROWS; i++) {
 			for (int j = 0; j < COLS; j++) {
@@ -43,8 +44,8 @@ public class AIPlayer {
 					if (tmpMoveScore != null && (bestSoFar == null || tmpMoveScore.score > bestSoFar.score) )
 						bestSoFar = tmpMoveScore; 
 				}
-				else if (hasAdjacentTile(i,j,board)) {
-					tmpMoveScore = getBestParallelMove(b,board,i,j); 
+				else if ((parallelDir = hasParallelMove(i,j,board))!=null) {
+					tmpMoveScore = getBestParallelMove(b,board,i,j,parallelDir); 
 					if (tmpMoveScore != null && (bestSoFar == null || tmpMoveScore.score > bestSoFar.score))
 						bestSoFar = tmpMoveScore; 
 				}
@@ -55,18 +56,36 @@ public class AIPlayer {
 		
 	}
 
-	private boolean hasAdjacentTile(int r, int c, Square[][] b) {
+	private DIR hasParallelMove(int r, int c, Square[][] b) {
 		if (b[r][c].getLetter() != EMPTY)
-			return false; 
-		if (r > 0 && b[r-1][c].getLetter() != EMPTY)
-			return true; 
-		if (c > 0 && b[r][c-1].getLetter() != EMPTY)
-			return true; 
-		if (r < ROWS - 1 && b[r+1][c].getLetter() != EMPTY)
-			return true; 
-		if (c < COLS - 1 && b[r][c+1].getLetter() != EMPTY)
-			return true; 
-		return false; 
+			return null; 
+		//Something north or south, check if we can play at least 2 letters
+		//Easterly in a "parallel play" that doesn't hit any tiles Easterly. 
+		if (r > 0 && b[r-1][c].getLetter() != EMPTY || r < (ROWS - 1) && b[r+1][c].getLetter() != EMPTY) {
+			if (c > 0 && b[r][c-1].getLetter() != EMPTY)//Must be next to blanks
+				return null; 
+			if (c < COLS -1 && b[r][c+1].getLetter() != EMPTY)
+				return null; 
+			if (c == COLS - 2 || c == 1)//Must be near edge OR have 2 blanks on 1 side
+				return DIR.E; 
+			if (c > 1 && b[r][c-2].getLetter() == EMPTY)
+				return DIR.E; 
+			if (c < COLS - 2 && b[r][c+2].getLetter() == EMPTY)
+				return DIR.E; 
+		}
+		if (c > 0 && b[r][c-1].getLetter() != EMPTY || c < (COLS - 1) && b[r][c+1].getLetter() != EMPTY) {
+			if (r > 0 && b[r-1][c].getLetter() != EMPTY)//Must be next to blanks
+				return null; 
+			if (r < ROWS -1 && b[r+1][c].getLetter() != EMPTY)
+				return null; 
+			if (r == ROWS - 2 || r == 1)//Must be near edge OR have 2 blanks on 1 side
+				return DIR.S; 
+			if (r > 1 && b[r-2][c].getLetter() == EMPTY)
+				return DIR.S; 
+			if (r < ROWS - 2 && b[r+2][c].getLetter() == EMPTY)
+				return DIR.S; 
+		}
+		return null;
 	}
 
 	public MoveScore getBestFirstMove(ScrabbleBoard sb, Square[][] b) {
@@ -419,9 +438,88 @@ public class AIPlayer {
 
 	}
 
-	private MoveScore getBestParallelMove(ScrabbleBoard sb, Square[][] b, int r, int c) {
+	private MoveScore getBestParallelMove(ScrabbleBoard sb, Square[][] b, int r, int c, DIR d) {
+		ScrabbleMove bestMoveSoFar = null; 
+		int bestScoreSoFar = 0; 
+		int maxPlaySize = rack.toString().length(); 
 
-		return null; 
+		if (maxPlaySize < 2)
+			return null; 
+
+		if (d == DIR.S) {
+			for (int i = 0; i < maxPlaySize; i++) {
+				if (r-i < 0 || (r-i > 0 && b[r-i-1][c].getLetter() != EMPTY)) {
+					return (bestMoveSoFar==null ? null : new MoveScore(bestMoveSoFar,bestScoreSoFar)); 
+				}
+				for (int j = 0; j < maxPlaySize; j++) {
+					if (i==0 && j==0)
+						continue; 
+					if (i+j+1 > maxPlaySize)
+						break;
+					if (r + j >= ROWS 
+							|| (r+j < ROWS-1 && b[r+j+1][c].getLetter() != EMPTY))
+						break; 
+
+					ArrayList<String> substrings = rack.getSubstringsOfRack(i+j+1); 
+					for (String str: substrings) {
+						ArrayList<String> anagrams = dict.getAnagrams(str); 
+						if (anagrams==null)
+							continue; 
+						for (String word:anagrams) {
+							String grabTiles = rack.hasTiles(word); 
+							if (grabTiles != null) {
+								ScrabbleMove tryMove = new ScrabbleMove(r-i,c,word,grabTiles,DIR.S); 
+								if (sb.isValidMove(tryMove)) {
+									int score = sb.computeScore(tryMove); 
+									if (bestMoveSoFar == null || score > bestScoreSoFar) {
+										bestMoveSoFar = tryMove;
+										bestScoreSoFar = score; 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < maxPlaySize; i++) {
+				if (c-i < 0 || (c-i > 0 && b[r][c-i-1].getLetter() != EMPTY)) {
+					return (bestMoveSoFar==null ? null : new MoveScore(bestMoveSoFar,bestScoreSoFar)); 
+				}
+				for (int j = 0; j < maxPlaySize; j++) {
+					if (i==0 && j==0)
+						continue; 
+					if (i+j+1 > maxPlaySize)
+						break;
+					if (c + j >= COLS 
+							|| (c+j < COLS-1 && b[r][c+j+1].getLetter() != EMPTY))
+						break; 
+
+					ArrayList<String> substrings = rack.getSubstringsOfRack(i+j+1); 
+					for (String str: substrings) {
+						ArrayList<String> anagrams = dict.getAnagrams(str); 
+						if (anagrams==null)
+							continue; 
+						for (String word:anagrams) {
+							String grabTiles = rack.hasTiles(word); 
+							if (grabTiles != null) {
+								ScrabbleMove tryMove = new ScrabbleMove(r,c-i,word,grabTiles,DIR.E); 
+								if (sb.isValidMove(tryMove)) {
+									int score = sb.computeScore(tryMove); 
+									if (bestMoveSoFar == null || score > bestScoreSoFar) {
+										bestMoveSoFar = tryMove;
+										bestScoreSoFar = score; 
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+		return (bestMoveSoFar == null ? null : new MoveScore(bestMoveSoFar,bestScoreSoFar)); 
 	}
 
 	public String getWordStartingHere(Square[][] b, int r, int c, DIR d) {
