@@ -394,18 +394,18 @@ public class ScrabbleBoard implements Cloneable{
 		if (m.dir == DIR.S) { //Check if it's a prefix/suffix of some word
 			if (c == 7 && r <= 7 && r+len-1 >= 7) //First move case
 				nextToSomething = true;
-			if (sBoard[Math.max(r-1,0)][c].getLetter() != EMPTY
+			/*if (sBoard[Math.max(r-1,0)][c].getLetter() != EMPTY
 					|| sBoard[Math.min(r+len,ROWS-1)][c].getLetter() != EMPTY) {
 				nextToSomething = true;
-			}
+			}*/
 		}
 		else if (m.dir == DIR.E) {
 			if (r == 7 && c <= 7 && c+len - 1 >=7)
 				nextToSomething = true; 
-			if (sBoard[r][Math.max(c-1,0)].getLetter() != EMPTY 
+			/*if (sBoard[r][Math.max(c-1,0)].getLetter() != EMPTY 
 					|| sBoard[r][Math.min(c+len,COLS-1)].getLetter() != EMPTY) {
 				nextToSomething = true;
-			}
+			}*/
 		}
 
 		//Collisions with letters already on board must match up
@@ -441,9 +441,9 @@ public class ScrabbleBoard implements Cloneable{
 									|| sBoard[r+i][Math.min(c+1,COLS-1)].getLetter()!=EMPTY)) {
 				nextToSomething = true; 
 			}
-			else if (m.dir == DIR.E && sBoard[r][c+i].getLetter() != EMPTY
-									|| sBoard[Math.max(r-1,0)][c].getLetter() != EMPTY
-									|| sBoard[Math.min(r+1,ROWS-1)][ROWS-1].getLetter() != EMPTY) {
+			else if (m.dir == DIR.E && (sBoard[r][c+i].getLetter() != EMPTY
+									|| sBoard[Math.max(r-1,0)][c+i].getLetter() != EMPTY
+									|| sBoard[Math.min(r+1,ROWS-1)][c+i].getLetter() != EMPTY)) {
 				nextToSomething = true; 
 			}
 		}

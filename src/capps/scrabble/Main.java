@@ -59,6 +59,26 @@ public class Main {
 		
 		PlayScrabble play = new PlayScrabble(sBoard, dict); 
 		play.startGame(); 
+		//testError(); 
+	}
+	
+	public static void testError() throws ScrabbleException {
+	
+		ScrabbleMove m1 = new ScrabbleMove(7,7,"REAVER", "REAVER", DIR.E);
+		ScrabbleMove m2 = new ScrabbleMove(1,13,"IONIZES","IONIZES", DIR.S); 
+		
+		int score1 = sBoard.makeMove(m1);
+		if (score1 < 0) {
+			o.println("Move 1 is invalid."); 
+			o.println(m1); 
+		}
+		
+		int score2 = sBoard.makeMove(m2);
+		if (score2  < 0 ) {
+			o.println("Move 2 is invalid.");
+			o.println(m2); 
+		}
+		
 	}
 
 	public static void testFirstMove() throws ScrabbleException {

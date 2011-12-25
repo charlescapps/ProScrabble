@@ -337,9 +337,9 @@ public class PlayScrabble {
 			return null; 
 		}
 
-		o.println("You entered move:"); 
-		o.println(opMove); 
-		o.println(); 
+		//o.println("You entered move:"); 
+		//o.println(opMove); 
+		//o.println(); 
 
 		return opMove; 
 	}
