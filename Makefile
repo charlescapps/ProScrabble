@@ -17,4 +17,5 @@ gendict.jar: $(ALL_SRC)
 	$(CMD2) $(OPT2) capps.scrabble.GenDict gendict.jar $(CHG_DIR) $(DEST)
 
 clean: 
-	rm nim.jar
+	rm -f scrabble.jar
+	rm -f gendict.jar
