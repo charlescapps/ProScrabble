@@ -15,12 +15,13 @@ import java.io.FileReader;
 
 public class Main {
 	private final static String USAGE 
-		= "java -jar scrabble.jar \"layout_file\" \"dict_object_file\""; 
+		= "java -jar scrabble.jar \"layout_file\" \"dict_text_file\""; 
 
 	private static BufferedReader layoutFile; 
+	private static BufferedReader dictFile; 
 
 	private static ScrabbleBoard sBoard; 
-	private static ScrabbleDict dict; 
+	private static FastDict dict; 
 
 	public static void main (String [] args) 
 		throws FileNotFoundException, IOException, 
@@ -31,18 +32,15 @@ public class Main {
 			System.exit(1); 
 		}
 
-
 		layoutFile = new BufferedReader(new FileReader(args[0])); 
-
-		FileInputStream fis = new FileInputStream(args[1]); 
-		ObjectInputStream ois = new ObjectInputStream(fis); 
+		dictFile = new BufferedReader(new FileReader(args[1])); 
 
 		o.println();
 		o.println("Please be patient. It takes 1-2 minutes to load the hash table."); 
 		o.println(); 
 
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
-		dict = (ScrabbleDict) ois.readObject();
+		dict = new FastDict(dictFile); 
 		o.println();
 
 		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
