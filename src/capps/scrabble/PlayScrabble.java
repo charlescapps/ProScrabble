@@ -348,15 +348,15 @@ public class PlayScrabble {
 
 	private static MENU_CHOICE getMenuChoice() throws IOException{
 		o.println("Scrabble Player Options: "); 
-		o.println("\t1) Play opponent's move"); 
-		o.println("\t2) Play manual move"); 
-		o.println("\t3) Play best move"); 
-		o.println("\t4) Force a move"); 
+		o.println("\t1) Play best move"); 
+		o.println("\t2) Play manual move (tiles used, must be valid)"); 
+		o.println("\t3) Play opponent's move (no tiles used, must be valid)"); 
+		o.println("\t4) Force a move (no tiles used, doesn't have to be valid)"); 
 		o.println("\t5) Undo previous move"); 
 		o.println("\t6) Add tiles"); 
 		o.println("\t7) Remove tiles"); 
 		o.println("\t8) Display board"); 
-		o.println("\t9) Add word to dictionary"); 
+		o.println("\t9) Add word to dictionary");
 		o.println("\t10) End Game"); 
 
 		o.print("ENTER OPTION>"); 
@@ -376,11 +376,11 @@ public class PlayScrabble {
 
 		switch (val) {
 			case 1: 
-				return MENU_CHOICE.PLAY_OPPONENT_MOVE; 
+				return MENU_CHOICE.GET_BEST_MOVE; 
 			case 2: 
 				return MENU_CHOICE.MANUAL_MOVE; 
 			case 3: 
-				return MENU_CHOICE.GET_BEST_MOVE; 
+				return MENU_CHOICE.PLAY_OPPONENT_MOVE; 
 			case 4:
 				return MENU_CHOICE.FORCE_MOVE; 
 			case 5:
