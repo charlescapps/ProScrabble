@@ -77,10 +77,7 @@ public class PlayScrabble {
 						removeTiles(); 
 						break; 
 					case DISPLAY: 
-						o.println(sb); 
-						o.println("Your rack: \"" + ai.getRack().toString() + "\""); 
-						o.println("Your total score: " + ai.getTotalScore()); 
-						o.println(); 
+						displayBoardAndRack(); 
 						break;
 					case ADD_TO_DICT: 
 						addToDict(); 
@@ -97,6 +94,14 @@ public class PlayScrabble {
 			}
 
 		} while (mc != MENU_CHOICE.END_GAME); 
+	}
+
+	private void displayBoardAndRack() {
+		o.println(sb); 
+		o.println("Your rack: \"" + ai.getRack().toString() + "\""); 
+		o.println("Your total score: " + ai.getTotalScore()); 
+		o.println(); 
+
 	}
 
 	private void giveTiles() throws IOException{
@@ -160,7 +165,7 @@ public class PlayScrabble {
 		int score = sb.makeMove(opMove); 
 
 		o.println("Opponent played for " + score + " points!"); 
-		o.println(sb); 
+		displayBoardAndRack();  
 	}
 
 	private void manualMove() throws IOException {
@@ -198,7 +203,7 @@ public class PlayScrabble {
 		}
 
 		o.println("You played a move for " + score + " points!"); 
-		o.println(sb); 
+		displayBoardAndRack();  
 
 	}
 
@@ -228,8 +233,7 @@ public class PlayScrabble {
 		if (s.equals("Y") || s.equals("y")) {
 			try {
 				ai.playMove(sb, bestMove.move); 
-				o.println(sb); 
-				o.println(); 
+				displayBoardAndRack();  
 			}
 			catch (ScrabbleException e) {
 				o.println("Exception occurred playing move. Returning to menu."); 

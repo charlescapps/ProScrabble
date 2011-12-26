@@ -36,9 +36,6 @@ public class Main {
 		dictFile = new BufferedReader(new FileReader(args[1])); 
 
 		o.println();
-		o.println("Please be patient. It takes 1-2 minutes to load the hash table."); 
-		o.println(); 
-
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
 		dict = new ScrabbleDict(dictFile); 
 		o.println();
