@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ScrabbleDict implements java.io.Serializable {
-	private static final long serialVersionUID=0xffffffff;
+	protected static final long serialVersionUID=0xffffffff;
 
-	private static final int HASH_SIZE = 1 << 26; //26 letters in English language!
+	protected static final int HASH_SIZE = 1 << 26; //26 letters in English language!
 	private final ArrayList<Word> lexiDict; 
 	private final WordBucket[] hashDict;
-	private final int NUM_WORDS; 
-	private final static char COMMENT_CHAR = '#';
+	protected final int NUM_WORDS; 
+	protected final static char COMMENT_CHAR = '#';
 
 	public ScrabbleDict(BufferedReader dictFile) throws IOException {
 		//first pass: get in lexicographic order

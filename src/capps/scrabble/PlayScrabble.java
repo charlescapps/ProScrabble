@@ -227,7 +227,8 @@ public class PlayScrabble {
 		o.println(); 
 		if (s.equals("Y") || s.equals("y")) {
 			try {
-			ai.playMove(sb, bestMove.move); 
+				ai.playMove(sb, bestMove.move); 
+				o.println(sb); 
 			}
 			catch (ScrabbleException e) {
 				o.println("Exception occurred playing move. Returning to menu."); 
