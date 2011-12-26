@@ -3,14 +3,14 @@ package	capps.scrabble;
 import java.util.Iterator;
 
 public class WordBucket 
-	implements Iterable<Word>, java.io.Serializable {
+	implements Iterable<String>, java.io.Serializable {
 	private static final long serialVersionUID = 0x11111111;
 
 	//Nested class for iterating over this uber-simple linked list
-	public static final class WordIter implements Iterator<Word> {
+	public static final class StringIter implements Iterator<String> {
 		private WordBucket b; 
 
-		public WordIter(WordBucket w) {
+		public StringIter(WordBucket w) {
 			b = w; 
 		}
 
@@ -20,8 +20,8 @@ public class WordBucket
 		}
 
 		@Override
-		public Word next() {
-			Word w = b.getWord(); 
+		public String next() {
+			String w = b.getWord(); 
 			b = b.getNext(); 
 			return w; 
 		}
@@ -31,24 +31,24 @@ public class WordBucket
 	}
 
 	private WordBucket next;
-	private Word w; 
+	private String w; 
 
-	public WordBucket(Word w) {
+	public WordBucket(String w) {
 		this.w = w; 
 		next = null; 
 	}
 
-	public WordBucket(Word w, WordBucket wb) {
+	public WordBucket(String w, WordBucket wb) {
 		this.w = w;
 		this.next = wb;  
 	}
 
-	public Iterator<Word> iterator() {
-		return new WordIter(this); 
+	public Iterator<String> iterator() {
+		return new StringIter(this); 
 
 	}
 
-	public Word getWord() {
+	public String getWord() {
 		return w;
 	}
 
@@ -60,7 +60,7 @@ public class WordBucket
 		return next; 
 	}
 
-	public WordBucket add(Word w) {
+	public WordBucket add(String w) {
 		WordBucket newHead = new WordBucket(w); 
 		newHead.setNext(this); 
 		return newHead; 

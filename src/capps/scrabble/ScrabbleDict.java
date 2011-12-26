@@ -10,70 +10,41 @@ public class ScrabbleDict implements java.io.Serializable {
 	private static final long serialVersionUID=0xffffffff;
 
 	private static final int HASH_SIZE = 1 << 26; //26 letters in English language!
-	private final ArrayList<Word> lexiDict; 
+	private final ArrayList<String> lexiDict; 
 	private final WordBucket[] hashDict;
 	private final int NUM_WORDS; 
 	private final static char COMMENT_CHAR = '#';
 
 	public ScrabbleDict(BufferedReader dictFile) throws IOException {
 		//first pass: get in lexicographic order
-		lexiDict = new ArrayList<Word>(); 
+		lexiDict = new ArrayList<String>(); 
+		hashDict = new WordBucket[HASH_SIZE]; 
 		String line; 
 		while ((line = dictFile.readLine()) != null) {
+			line = line.toUpperCase(); 
 			//Allow commenting lines when I discover words not in 4th edition!
 			if (line.length() > 1 && line.charAt(0) != COMMENT_CHAR ) { 
-				lexiDict.add(new Word(line)); 
+				lexiDict.add(line); 
 			}
+			int hashVal = hash(line); 
+			hashDict[hashVal] = new WordBucket(line, hashDict[hashVal]); 
 		}
 		dictFile.close(); 
 
 		NUM_WORDS = lexiDict.size(); 
-
-		//Second pass: Get words in hash table and attach prefixes/suffixes
-		hashDict = new WordBucket[HASH_SIZE]; 
-		for (int i = 0; i < NUM_WORDS; i++) {
-			Word w = lexiDict.get(i); 
-			int hashVal = hash(w.toString()); 
-			hashDict[hashVal] = new WordBucket(w, hashDict[hashVal]); 
-
-			int j = i + 1; 
-
-			//Get suffixes. Will be immediately following in lexicographic order!
-			while (j < NUM_WORDS && lexiDict.get(j).toString().startsWith(w.toString())) {
-				w.addSuffix(lexiDict.get(j)); 
-				j++; 
-
-			}
-		}
-
-		//Third pass: Use hash table to find prefixes
-		//by checking words with the same letters
-		for (Word w: lexiDict) {
-			for (Word p: lexiDict) {
-				if (p.toString().length() > w.toString().length() && 
-						p.toString().endsWith(w.toString()) )
-					w.addPrefix(p); 
-
-				}
-			System.out.println("Got prefixes for: " + w); 
-			}
 	}
 
 	//Testing to verify it worked
 	public void dumpDict(BufferedWriter bw) throws IOException {
-		/*
-		for (Word w: lexiDict) {
-			bw.write(w.toString()); 
-			bw.newLine(); 
-		}*/
 
 		bw.write("HASH TABLE:");
 		bw.newLine(); 
 
 		for (int i = 0; i < HASH_SIZE; i++) {
 			if (hashDict[i] != null) {
-				for (Word w: hashDict[i]) {
-					bw.write(w.toLongString()); 
+				bw.write("[" + Integer.toString(i,2) + "]\n"); //Writes binary string.
+				for (String w: hashDict[i]) {
+					bw.write("\t" + w); 
 					bw.newLine(); 
 				}
 				
@@ -89,22 +60,22 @@ public class ScrabbleDict implements java.io.Serializable {
 			return false; 
 		}
 
-		for (Word w: matches) {
-			if (w.strEquals(s))
+		for (String w: matches) {
+			if (w.equals(s))
 				return true;
 		}
 
 		return false; 
 	}
 
-	public Word exactMatch(String s) {
+	public String exactMatch(String s) {
 		WordBucket matches = getMatches(s); 
 		if (matches == null) {
 			return null; 
 		}
 
-		for (Word w: matches) {
-			if (w.strEquals(s))
+		for (String w: matches) {
+			if (w.equals(s))
 				return w;
 		}
 		return null; 
@@ -120,9 +91,9 @@ public class ScrabbleDict implements java.io.Serializable {
 			return null; 
 		ArrayList<String> anagrams = new ArrayList<String>(); 
 
-		for (Word w: matches) {
-			if (w.isAnagram(s))
-				anagrams.add(w.toString()); 
+		for (String w: matches) {
+			if (ScrabbleConstants.areAnagrams(s,w))
+				anagrams.add(w); 
 		}
 
 		return anagrams; 
@@ -143,28 +114,21 @@ public class ScrabbleDict implements java.io.Serializable {
 
 	public void addToDict(String s) {
 		if (inDict(s.toUpperCase())) {
-			System.out.println("Word \"" + s + "\" already in dictionary."); 
+			System.out.println("String \"" + s + "\" already in dictionary."); 
 			return; 
 		}
 		s = s.toUpperCase(); 
-		Word newWord = new Word(s); 
-		WordBucket bucket = getMatches(s); 
-		bucket.add(newWord); 
+		int sHash = hash(s); 
+		hashDict[sHash] = new WordBucket(s,hashDict[sHash]); 
 
-		for (Word w: lexiDict) {
-			if (w.toString().endsWith(s) && !w.strEquals(s)) {
-				newWord.addPrefix(w); 
+		for (int i = 0; i < lexiDict.size(); i++) {
+			if (lexiDict.get(i).compareTo(s) < 0 && (i == lexiDict.size() - 1 || lexiDict.get(i+1).compareTo(s) > 0)) {
+				lexiDict.add(i+1,s); 
 			}
-			else if (s.startsWith(w.toString()) && !w.strEquals(s)) {
-				w.addSuffix(newWord); 
-			}
-			else if (s.endsWith(w.toString()) && !w.strEquals(s)) {
-				w.addPrefix(newWord); 	
-			}
-			else if (w.toString().startsWith(s) && !w.strEquals(s)) {
-				newWord.addSuffix(w); 
-			}
+			
+			i++;
 		}
+
 	}
 
 

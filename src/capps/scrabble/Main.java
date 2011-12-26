@@ -21,7 +21,7 @@ public class Main {
 	private static BufferedReader dictFile; 
 
 	private static ScrabbleBoard sBoard; 
-	private static FastDict dict; 
+	private static ScrabbleDict dict; 
 
 	public static void main (String [] args) 
 		throws FileNotFoundException, IOException, 
@@ -40,7 +40,7 @@ public class Main {
 		o.println(); 
 
 		o.println("Loading scrabble dictionary from \"" + args[1] + "\""); 
-		dict = new FastDict(dictFile); 
+		dict = new ScrabbleDict(dictFile); 
 		o.println();
 
 		o.println("Loading scrabble layout from \"" + args[0] + "\""); 

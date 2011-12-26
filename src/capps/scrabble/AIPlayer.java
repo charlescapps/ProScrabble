@@ -142,49 +142,64 @@ public class AIPlayer {
 		}
 
 		int bestScoreSoFar = 0; 
-		ScrabbleMove bestMove = null; 
+		ScrabbleMove bestMoveSoFar = null; 
 		//Looking if we're at start of a word
 		//SOUTH case:
 		DIR d = DIR.S; 
 		if (!searchedS[r][c]) {
 			String base; 
 			if ((base = getWordStartingHere(b,r,c,d)) != null) {
-				//o.println("Base word: " + base); 
-				Word w = dict.exactMatch(base); 
+				String w = dict.exactMatch(base); 
 				if (w == null) {
 					o.println("Invalid word on board at (" + r+","+c+")"); 
 				}
-				else {
-					for (Word p: w.getPrefixes()) { //Check if prefixes work
-						int delta = p.toString().length() - base.length(); 
-						if (r - delta < 0)
-							continue;
 
-						StringBuffer tilesNeeded = new StringBuffer(); 
+				int wLen = base.length();
 
-						for (int i = 0; i < delta; i++) {
-							if (b[r-delta+i][c].getLetter() == EMPTY)
-								tilesNeeded.append(p.toString().charAt(i)); 
+				for ( int i = wLen; i < (ROWS-r); i++) {
+					for (int j=0; j <= r; j++) {
+
+						//Get the number of blanks in this search range
+						int numTilesReq = 0; 
+						for (int r1 = r-j; r1 <= r+i; r1++) {
+							if (b[r1][c].getLetter() == EMPTY)
+								numTilesReq++; 
 						}
-						String grabNeededTiles; 	
-						if ( (grabNeededTiles = rack.hasTiles(tilesNeeded.toString()))==null){
+						if (numTilesReq > rack.toString().length())
+							break; 
+
+						ArrayList<String> substrings = rack.getSubstringsOfRack(numTilesReq);
+
+						if (substrings == null)
 							continue; 
-						}
 
-						ScrabbleMove tryMove = 
-							new ScrabbleMove(r-delta,c,p.toString(),
-									grabNeededTiles, d); 
+						for (String substr: substrings) {
+							int subIndex = 0;
+							StringBuffer cand = new StringBuffer(); 
+							for (int r1 = r-j; r1 <= r+i; r1++){
+								if (b[r1][c].getLetter() == EMPTY)
+									cand.append(substr.charAt(subIndex++)); 
+								else
+									cand.append(b[r1][c].getLetter());
+							}
 
-						if (sb.isValidMove(tryMove)) {
-							int tmp = sb.computeScore(tryMove); 
-							if (tmp > bestScoreSoFar) {
-								bestScoreSoFar = tmp; 
-								bestMove = tryMove; 
+							if (dict.exactMatch(cand.toString()) == null)
+								continue; 
+
+							String grabTiles = rack.hasTiles(substr); 
+
+							ScrabbleMove tryMove = new ScrabbleMove(r-j,c,cand.toString(),grabTiles,DIR.S); 
+							if (sb.isValidMove(tryMove)) {
+								int score = sb.computeScore(tryMove);
+								if (bestMoveSoFar == null || bestScoreSoFar < score) {
+									bestMoveSoFar = tryMove; 
+									bestScoreSoFar = score; 
+								}
 							}
 						}
 					}
 				}
-				for (int r1 = r; ;r1++) {
+				for (int r1 = r; r1 < wLen ;r1++) {
 					if (r1 >= ROWS || b[r1][c].getLetter() == EMPTY)
 						break; 
 					searchedS[r1][c] = true; 
@@ -198,8 +213,8 @@ public class AIPlayer {
 					(sb,b,r,c,DIR.S); 
 				for (ScrabbleMove m: perpMoves) {
 					int score = sb.computeScore(m); 
-					if (bestMove == null || bestScoreSoFar < score) {
-						bestMove = m; 
+					if (bestMoveSoFar == null || bestScoreSoFar < score) {
+						bestMoveSoFar = m; 
 						bestScoreSoFar = score; 
 					}
 				}
@@ -211,41 +226,53 @@ public class AIPlayer {
 			d = DIR.E; 
 			String base; 
 			if ((base = getWordStartingHere(b,r,c,d)) != null) {
-				//o.println("Base word: " + base); 
-				Word w = dict.exactMatch(base); 
+				String w = dict.exactMatch(base); 
 				if (w == null) {
 					o.println("Invalid word on board at (" + r+","+c+")"); 
 				}
-				else {
-					for (Word p: w.getPrefixes()) { //Check if prefixes work
-						//o.println("\tPrefix found: " + p); 
-						int delta = p.toString().length() - base.length(); 
-						if (c - delta < 0)
-							continue;
 
-						StringBuffer tilesNeeded = new StringBuffer(); 
+				int wLen = base.length();
 
-						for (int i = 0; i < delta; i++) {
-							if (b[r][c-delta+i].getLetter() == EMPTY)
-								tilesNeeded.append(p.toString().charAt(i)); 
+				for ( int i = wLen; i < (COLS-c); i++) {
+					for (int j=0; j <= c; j++) {
+
+						//Get the number of blanks in this search range
+						int numTilesReq = 0; 
+						for (int c1 = c-j; c1 <= c+i; c1++) {
+							if (b[r][c1].getLetter() == EMPTY)
+								numTilesReq++; 
 						}
-						
-						String grabTiles; 
-						if ( (grabTiles = rack.hasTiles(tilesNeeded.toString()))==null){
-							//o.println("Doesn't have tiles needed"); 
+
+						if (numTilesReq > rack.toString().length())
+							break; 
+
+						ArrayList<String> substrings = rack.getSubstringsOfRack(numTilesReq);
+
+						if (substrings == null)
 							continue; 
-						}
 
-						ScrabbleMove tryMove = 
-							new ScrabbleMove(r,c-delta,p.toString(),
-									grabTiles, d); 
+						for (String substr: substrings) {
+							int subIndex = 0;
+							StringBuffer cand = new StringBuffer(); 
+							for (int c1 = c-j; c1 <= c+i; c1++){
+								if (b[r][c1].getLetter() == EMPTY)
+									cand.append(substr.charAt(subIndex++)); 
+								else
+									cand.append(b[r][c1].getLetter());
+							}
 
-						if (sb.isValidMove(tryMove)) {
-							int tmp = sb.computeScore(tryMove); 
-							if (tmp > bestScoreSoFar) {
-								bestScoreSoFar = tmp; 
-								bestMove = tryMove; 
-						//		o.println("New best move from east prefix at (" + r + "," + c + ")\n" + bestMove); 
+							if (dict.exactMatch(cand.toString()) == null)
+								continue; 
+
+							String grabTiles = rack.hasTiles(substr); 
+
+							ScrabbleMove tryMove = new ScrabbleMove(r-j,c,cand.toString(),grabTiles,DIR.E); 
+							if (sb.isValidMove(tryMove)) {
+								int score = sb.computeScore(tryMove);
+								if (bestMoveSoFar == null || bestScoreSoFar < score) {
+									bestMoveSoFar = tryMove; 
+									bestScoreSoFar = score; 
+								}
 							}
 						}
 					}
@@ -264,18 +291,18 @@ public class AIPlayer {
 					(sb,b,r,c,DIR.E); 
 				for (ScrabbleMove m: perpMoves) {
 					int score = sb.computeScore(m); 
-					if (bestMove == null || bestScoreSoFar < score) {
-						bestMove = m; 
+					if (bestMoveSoFar == null || bestScoreSoFar < score) {
+						bestMoveSoFar = m; 
 						bestScoreSoFar = score; 
 					}
 				}
 			}
 		}
 
-		if (bestMove == null)
+		if (bestMoveSoFar == null)
 			return null; 
 		else
-			return new MoveScore(bestMove, bestScoreSoFar); 
+			return new MoveScore(bestMoveSoFar, bestScoreSoFar); 
 	}
 
 	private ArrayList<ScrabbleMove> getPerpMoves
