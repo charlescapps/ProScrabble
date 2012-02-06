@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import capps.scrabble.AIPlayer;
 import capps.scrabble.BadStateException;
 import capps.scrabble.MoveScore;
+import capps.scrabble.Rack;
 import capps.scrabble.ScrabbleBoard;
 import capps.scrabble.ScrabbleDict;
+import capps.scrabble.ScrabbleConstants;
 
 import static capps.scrabble.ScrabbleConstants.*;
 import capps.scrabble.ScrabbleException;
@@ -33,32 +35,76 @@ public class Arbitrate {
 	private static BufferedReader stateFile; 
 	private static BufferedReader dictFile; 
 
-	private static ScrabbleBoard sBoard; 
-	private static ScrabbleDict dict; 
-    private static String initRack;
-    private static AIPlayer ai;
-	private static String noobMoveStr; 
+	private static ScrabbleBoard sBoard; //The test board from file
+	private static ScrabbleDict dict;   //dictionary object
+	private static AIPlayer ai;        //AI to check noob's move against the optimal
+    private static String initRack;    //Test case rack from file
+	private static String noobMoveStr; //The move string input from stdin
 
 	public static void main (String[] args) 
-        throws IOException, BadStateException, ScrabbleException {
+        throws IOException,  ScrabbleException {
         
         if (args.length != 3) {
             o.println("Error: need exactly 3 arguments."); 
             o.println(USAGE); 
             System.exit(1); 
         }
-
+		
 		o.println("TEST FILE: " + args[2]); 
 
-        readInState(args); 
-		getMoveFromStdin();
+		try {
+			readInState(args);
+		}
+		catch (BadStateException e) {
+			o.println(e.getMessage()); 
+			System.exit(1); 
+		}
 
-		o.println("YOUR MOVE STRING> " + noobMoveStr + NL);
+		getMoveFromStdin(); //Get the noob's move for this test case
 
-		ScrabbleMove noobMove = new ScrabbleMove(noobMoveStr); 
+		o.println(); 
+		o.println("YOUR MOVE: \"" + noobMoveStr + "\"" + NL);
 
-		o.println("PARSED> ");
-		o.println(noobMove.toAcmString()); 
+		Rack testCaseRack = null; 
+
+		try {
+			testCaseRack = new Rack(initRack);
+		}
+		catch (ScrabbleException e) {
+			o.println("INVALID TEST CASE: initial rack \"" + initRack + "\" was bad."); 
+			System.exit(1); 
+		}
+
+		ScrabbleMove noobMove = null; 
+
+		try {
+			noobMove = new ScrabbleMove(noobMoveStr); 
+		}
+		catch (BadStateException e) {
+			o.println(e.getMessage()); 
+			System.exit(1); 
+		}
+
+		if (!ScrabbleConstants.containsLetters(noobMove.tilesUsed, initRack)) {
+			o.println("ERROR: your move used tiles you don't actually have!");
+			System.exit(1); 
+		}
+
+		//Check that reading in their move string, then spitting it out again
+		//gives the same result
+		//o.println("CHECK PARSE CODE (should be the same as your input move)> "); 
+		//o.println(noobMove.toAcmString());
+
+		if (!sBoard.isValidMove(noobMove)) {
+			o.println("Your move is invalid! Placing move on board so you can see why!"); 
+			sBoard.forceMove(noobMove); 
+
+			o.println(); 
+			o.println("****************AFTER YOUR INVALID MOVE********************"); 
+			o.println(sBoard); 
+
+			System.exit(1); 
+		}
 
         int noobScore = sBoard.makeMove(noobMove); 
 
@@ -66,7 +112,24 @@ public class Arbitrate {
         o.println(); 
         o.println(sBoard); 
 
-		o.println("YOUR SCORE> " + noobScore); 
+		o.println("Congrats! You played a valid move!"); 
+		o.println("YOUR SCORE = " + noobScore); 
+
+		MoveScore best = ai.getBestMove(sBoard); 
+
+		o.println(); 
+
+		if (noobScore < best.score) {
+			o.println(":-( Your score is less than the optimal score of " + best.score + "."); 
+		}
+		else if (noobScore == best.score) {
+			o.println("Good job! You got the optimal score for this board!"); 
+		}
+		else {
+			o.println("You got a better score than what Charles thought was the best score...!"); 
+			o.println("His AI says that " + best.score + " is the best!"); 
+			o.println("No one shold ever see this message..."); 
+		}
 
 	}
 
@@ -75,13 +138,17 @@ public class Arbitrate {
 
 		String line=null;
 		while ( (line = in.readLine()) != null) {
-			String[] tokens = line.split(" \t");
-			if (tokens.length >= 2 && tokens[0].toUpperCase().equals("SCRBL_MOVE:"))
-				noobMoveStr = tokens[1];
+
+			String[] tokens = line.split(":");
+			if (tokens.length >= 2 && tokens[0].toUpperCase().equals(SCRBL_MOVE)) {
+				noobMoveStr = line;
+				break; 
+			}
 		}
 
 		if (noobMoveStr == null) {
 			o.println("ERROR: No scrabble move found in standard in.");
+			o.println("FORMAT: " + ScrabbleMove.ACM_FORMAT); 
 			System.exit(1); 
 		}
 	}
@@ -97,14 +164,37 @@ public class Arbitrate {
 		dict = new ScrabbleDict(dictFile); 
 
 		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
-		o.println("Setting state from standard in..."); 
+		o.println("Setting state from test file..."); 
+
+		//Get the line with the rack 
+		String firstLine = stateFile.readLine(); 
+		String[] tokens = firstLine.split(":");
+		if (tokens.length < 2 || !tokens[0].toUpperCase().equals(SCRBL_RACK))
+			throw new BadStateException("INVALID TEST FILE: " + NL +
+					"FORMAT: \"scrbl_rack: [A-Za-z\\*]+\""); 
+
+		initRack = tokens[1].trim(); 
+
+		//Grabbed rack from file, now initialize board from stream
+		
+		//First line in stream must be scrbl_board:
+		firstLine = stateFile.readLine(); 
+		tokens = firstLine.split(":"); 
+
+		if (!tokens[0].toUpperCase().equals(SCRBL_BOARD)) {
+			throw new BadStateException("INVALID TEST FILE: " + NL +
+					"FORMAT: scrbl_board:\\n <board goes on 15 lines here>");
+		}
+
         sBoard = new ScrabbleBoard(layoutFile, stateFile, dict); 
 
 		o.println(); 
 
-        o.println("*****************TEST BOARD*****************:"); 
+		o.println("TEST RACK> " + initRack); 
+        o.println("************TEST BOARD************"); 
         o.println(sBoard); 
 
+		//Make a new AI with this rack and dictionary.
 	    ai = new AIPlayer(initRack, dict); 
     }
 

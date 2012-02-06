@@ -45,6 +45,7 @@ public class ScrabbleBoard implements Cloneable{
 
 	private void initState(BufferedReader inputState) 
 			throws BadStateException, IOException {
+
 		String line;
 		int numCols = 0, numRows = 0; 
 		Pattern p = Pattern.compile("(_|[A-Za-z]\\*?)"); 

@@ -7,6 +7,8 @@ import static capps.scrabble.ScrabbleConstants.*;
 
 public class ScrabbleMove {
 
+	final public static String ACM_FORMAT 
+		= "scrbl_move: (tiles_used) (ROW, COL, word_played, EAST | SOUTH)";
 	final public int row; 
 	final public int col; 
 	final public String play; 
@@ -23,17 +25,17 @@ public class ScrabbleMove {
 	}
 
 	public ScrabbleMove(String acmString) throws BadStateException{
-		String[] tokens = acmString.split(" \t"); 
-		if (!tokens[0].toUpperCase().equals("SCRBL_MOVE:")) {
-			throw new BadStateException("Move string doesn't start with 'scrbl_move:'"
-						+ NL + "\tInput was: '" + acmString + "'");
+		String[] tokens = acmString.split(":"); 
+		if (!tokens[0].toUpperCase().equals("SCRBL_MOVE")) {
+			throw new BadStateException("Move string doesn't start with \"scrbl_move:\""
+						+ NL + "\tFormat is: '" + ACM_FORMAT + "'");
 		}
 
-		Pattern used = Pattern.compile("^\\s*([A-Za-z\\*]+)");
+		Pattern used = Pattern.compile("\\(\\s*([A-Za-z\\*]+)\\s*\\)");
 		Matcher m = used.matcher(acmString); 
-		if (!m.lookingAt()) {
-			throw new BadStateException("Tiles used not found at start of move string." 
-					+"Move string: '" + acmString + "'"); 
+		if (!m.find()) {
+			throw new BadStateException("Tiles used not found in move string." 
+					+"Format is: '" + ACM_FORMAT + "'"); 
 		}
 
 		this.tilesUsed = m.group(1).toUpperCase(); 
@@ -42,17 +44,17 @@ public class ScrabbleMove {
 				"\\(\\s*([0-9]+)\\s*," //Row 
 			   +"\\s*([0-9]+)\\s*," //Col
 			   +"\\s*([a-zA-Z]+)\\s*," //Play
-			   +"\\s*((?:EAST)|(?:SOUTH)\\)"); //EAST or SOUTH
+			   +"\\s*([a-zA-Z]+)\\s*\\)"); //EAST or SOUTH
 
 		m = theRest.matcher(acmString); 
-		if (!m.lookingAt()) {
-			throw new BadStateException("Invlid move string: '" + acmString + "'"); 
+		if (!m.find()) {
+			throw new BadStateException("Invlid move string '" + acmString + "'"); 
 		}
 
 		this.row = Integer.parseInt(m.group(1)); 
 		this.col = Integer.parseInt(m.group(2)); 
-		this.play = m.group(3); 
-		this.dir = m.group(4).equals("E") ? DIR.E : DIR.S; 
+		this.play = m.group(3).toUpperCase(); 
+		this.dir = m.group(4).toUpperCase().equals("EAST") ? DIR.E : DIR.S; 
 	}
 
 	@Override
@@ -60,14 +62,14 @@ public class ScrabbleMove {
 		StringBuffer sb = new StringBuffer(); 
 
 		sb.append("Scrabble Move: row=" + row + ", col=" + col + NL); 
-		sb.append("\tWord=\"" + play + "\", dir=" + dir.toString()); 
+		sb.append("\tWord=\"" + play + "\", dir=" + (dir==DIR.E ? "EAST" : "SOUTH")); 
 		sb.append("\n\tTiles used=\"" + tilesUsed + "\""); 
 		return sb.toString(); 
 	}
 
 	public String toAcmString() {
 
-		return ("scrbl_move: " + "(" + row + ", " + col +", " + play + ", " + dir.toString() + ")"); 
+		return ("scrbl_move: " + "(" + this.tilesUsed + ") " + "(" + row + ", " + col +", " + play + ", " + (dir == DIR.E ? "EAST" : "SOUTH") + ")"); 
 		
 	}
 

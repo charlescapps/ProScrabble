@@ -13,6 +13,10 @@ public class ScrabbleConstants {
 	public static final String sEMPTY = "_"; 
 	public static final String sWILDCARD = "*"; 
 
+	public static final String SCRBL_MOVE = "SCRBL_MOVE"; 
+	public static final String SCRBL_RACK = "SCRBL_RACK"; 
+	public static final String SCRBL_BOARD = "SCRBL_BOARD"; 
+
 	public static final int ROWS = 15; 
 	public static final int COLS = 15; 
 
@@ -73,5 +77,27 @@ public class ScrabbleConstants {
 
 		return -1; 
 			
+	}
+
+	//This checks if haystack contains the letters of needle (with duplication)
+	//Does not take into account wildcards/blank tiles like the method
+	//hasTiles in the Rack class. 
+	public static final boolean containsLetters(String needle, String haystack) {
+		boolean[] marked = new boolean[haystack.length()]; 
+		
+		for (int i = 0; i < needle.length(); i++) {
+			boolean markedSomething = false; 
+			for (int j = 0; j < haystack.length(); j++) {
+				if (haystack.charAt(j) == needle.charAt(i) && !marked[j]) {
+					marked[j] = true; 
+					markedSomething = true;
+					break; 
+				}
+			}
+			if (!markedSomething) {
+				return false; 
+			}
+		}
+		return true; 
 	}
 }

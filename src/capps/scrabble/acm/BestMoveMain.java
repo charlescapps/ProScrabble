@@ -40,16 +40,20 @@ public class BestMoveMain {
 
         readInState(args); 
 
+        o.println("************TEST BOARD************"); 
+        o.println(sBoard); 
+
         MoveScore bestMove = ai.getBestMove(sBoard); 
 
-        o.println("Score: " + bestMove.score); 
+		o.println("BEST MOVE:"); 
         o.println(bestMove.move.toAcmString()); 
+		o.println(); 
+        o.println("SCORE: " + bestMove.score); 
         o.println(); 
 
         sBoard.makeMove(bestMove.move); 
 
-        o.println("State after move:");
-        o.println(); 
+        o.println("********BOARD AFTER MOVE**********");
         o.println(sBoard); 
 
 	}
@@ -65,7 +69,7 @@ public class BestMoveMain {
 		String[] tokens = firstLine.split(" ");
 		if (tokens.length < 2 || !tokens[0].toUpperCase().equals("SCRBL_RACK:"))
 			throw new BadStateException("First line must be like this:" + NL +
-					"RACK: ABCDEFG"); 
+					"RACK: <rack_tiles>"); 
 
 		initRack = tokens[1]; 
 
@@ -74,13 +78,20 @@ public class BestMoveMain {
 		dict = new ScrabbleDict(dictFile); 
 
 		o.println("Loading scrabble layout from \"" + args[0] + "\""); 
-		o.println("Setting state from standard in..."); 
+		o.println("Setting board state from standard in..."); 
+		//First line in stream must be scrbl_board:
+		firstLine = stateFile.readLine(); 
+		tokens = firstLine.split(":"); 
+
+		if (!tokens[0].toUpperCase().equals(SCRBL_BOARD)) {
+			throw new BadStateException("INVALID TEST FILE: " + NL +
+					"FORMAT: scrbl_board:\\n <board goes on 15 lines here>");
+		}
+
         sBoard = new ScrabbleBoard(layoutFile, stateFile, dict); 
 
 		o.println(); 
 
-        o.println("State:"); 
-        o.println(sBoard); 
 
 	    ai = new AIPlayer(initRack, dict); 
     }

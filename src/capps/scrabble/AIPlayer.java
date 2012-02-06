@@ -151,7 +151,7 @@ public class AIPlayer {
 			if ((base = getWordStartingHere(b,r,c,d)) != null) {
 				String w = dict.exactMatch(base); 
 				if (w == null) {
-					o.println("Invalid word on board at (" + r+","+c+")"); 
+					//o.println("Invalid word on board at (" + r+","+c+")"); 
 				}
 
 				int wLen = base.length();
@@ -228,7 +228,7 @@ public class AIPlayer {
 			if ((base = getWordStartingHere(b,r,c,d)) != null) {
 				String w = dict.exactMatch(base); 
 				if (w == null) {
-					o.println("Invalid word on board at (" + r+","+c+")"); 
+					//o.println("Invalid word on board at (" + r+","+c+")"); 
 				}
 
 				int wLen = base.length();
@@ -369,9 +369,9 @@ public class AIPlayer {
 
 							String grabTiles = rack.hasTiles(rackStrInOrder.toString()); 
 							if (grabTiles == null) {
-								o.println("Didn't have tiles '" + rackStrInOrder.toString() + "'"); 
-								o.println("Tried to play word '" + m + "'"); 
-								o.println(); 
+							//	o.println("Didn't have tiles '" + rackStrInOrder.toString() + "'"); 
+							//	o.println("Tried to play word '" + m + "'"); 
+							//	o.println(); 
 								continue; 
 							}
 
@@ -440,18 +440,18 @@ public class AIPlayer {
 
 							String grabTiles = rack.hasTiles(rackStrInOrder.toString()); 
 							if (grabTiles == null) {
-								o.println("Didn't have tiles '" + rackStrInOrder.toString() + "'"); 
-								o.println("Tried to play word '" + m + "'"); 
-								o.println(); 
+								//o.println("Didn't have tiles '" + rackStrInOrder.toString() + "'"); 
+								//o.println("Tried to play word '" + m + "'"); 
+								//o.println(); 
 								continue; 
 							}
 							ScrabbleMove move = new ScrabbleMove(r,c-i,m,grabTiles,DIR.E);
 							if (sb.isValidMove(move)) {
 								if (grabTiles.equals("")){
-									o.println("grabTiles==\"\" in perpMoves"); 
-									o.println("rackStr==\"" + rackStr + "\""); 
-									o.println("\tPlay:"+m); 
-									o.println(move); 
+									//o.println("grabTiles==\"\" in perpMoves"); 
+									//o.println("rackStr==\"" + rackStr + "\""); 
+									//o.println("\tPlay:"+m); 
+									//o.println(move); 
 								}
 								moves.add(move); 
 							}

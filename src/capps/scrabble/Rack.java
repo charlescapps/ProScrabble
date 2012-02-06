@@ -13,8 +13,9 @@ public class Rack {
 
 	public Rack(String initialTiles) throws ScrabbleException {
 		tiles = initialTiles.toUpperCase(); 
-		if (tiles.length() != 7) 
-			throw new ScrabbleException("Initial tiles not size 7!"); 
+		if (tiles.length() > 7) 
+			throw new ScrabbleException(
+				"INVALID RACK: \"" + initialTiles + "\" has More than 7 tiles!"); 
 
 		for (int i = 0; i < tiles.length(); i++) {
 			if ( (tiles.charAt(i) < 'A' || tiles.charAt(i) > 'Z') && tiles.charAt(i) != WILDCARD)
