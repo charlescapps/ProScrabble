@@ -4,9 +4,16 @@ import static capps.scrabble.ScrabbleConstants.*;
 
 import java.io.BufferedReader; 
 import java.io.IOException; 
+import java.util.regex.*;
 
 public class ScrabbleBoard implements Cloneable{
-
+	//Strings in the text file giving the board layout
+	private final static String doubleLett = "DL"; 
+	private final static String doubleWord = "DW"; 
+	private final static String tripleLett = "TL"; 
+	private final static String tripleWord = "TW"; 
+	private final static String fileBlank = "B"; 
+	//State of the board
 	private Square[][] sBoard; 
 	private ScrabbleBoard previous; //Implicit linked-list of previous states =) 
 	private ScrabbleDict dict; 
@@ -14,15 +21,74 @@ public class ScrabbleBoard implements Cloneable{
 	public ScrabbleBoard(BufferedReader layoutFile, ScrabbleDict dict) throws IOException{
 
 		this.dict = dict; 
+		this.sBoard = initBoardLayout(layoutFile); 
+	}
 
-		//Strings in the text file giving the board layout
-		final String doubleLett = "DL"; 
-		final String doubleWord = "DW"; 
-		final String tripleLett = "TL"; 
-		final String tripleWord = "TW"; 
-		final String fileBlank = "B"; 
+	public ScrabbleBoard(BufferedReader layoutFile, BufferedReader inputState, ScrabbleDict dict) 
+		throws IOException, BadStateException{
 
-		sBoard = new Square[ROWS][COLS]; 
+		this.dict = dict;
+		this.sBoard = initBoardLayout(layoutFile); 
+		initState(inputState); 
+
+	}
+
+	public boolean isEmptyBoard() {
+		for (int i = 0; i < ROWS; i++) 
+			for (int j = 0; j < COLS; j++)
+				if (sBoard[i][j].getLetter() != EMPTY) {
+					return false;
+				}
+
+		return true;
+	}
+
+	private void initState(BufferedReader inputState) 
+			throws BadStateException, IOException {
+		String line;
+		int numCols = 0, numRows = 0; 
+		Pattern p = Pattern.compile("(_|[A-Za-z]\\*?)"); 
+		Matcher m = null;
+		String sq = null;
+
+		while ((line = inputState.readLine()) != null) {
+			if (line.trim().equals(""))
+				continue; 
+
+			m = p.matcher(line); 
+			numCols = 0; 
+
+			while (m.find()) {
+				sq = m.group(1); 
+				char c = sq.charAt(0);
+				if (!sq.equals(sEMPTY) && 
+						!(c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z'))
+					throw new BadStateException("Bad character in board state: " + c); 
+
+				//If there's a * after the letter it's a blank
+				sBoard[numRows][numCols].setLetter(Character.toUpperCase(c));
+				if (sq.length() > 1 && sq.charAt(1) == WILDCARD) {
+					sBoard[numRows][numCols].setIsBlank(true); 
+				}
+
+				numCols++;
+			}
+			if (numCols != COLS)
+				throw new BadStateException("Invalid no. of columns: " + numCols); 
+				
+			numRows++;
+		}
+		if (numRows != 15)
+			throw new BadStateException("Invalid no. of rows: " + numRows); 
+
+		if (!this.isEmptyBoard() && sBoard[7][7].getLetter() == EMPTY) {
+			throw new BadStateException("Invalid board. Non-empty but center " 
+					+ "square is empty");
+		}
+	}
+
+	private Square[][] initBoardLayout(BufferedReader layoutFile) throws IOException {
+		Square[][] tmpBoard = new Square[ROWS][COLS]; 
 		previous = null; 
 
 		String line; 
@@ -32,19 +98,19 @@ public class ScrabbleBoard implements Cloneable{
 			assert(tokens.length==COLS);//Demand our text file has the proper number of cols =)
 			for (c = 0; c < COLS; c++) {
 				if (tokens[c].equals(fileBlank)) {
-					sBoard[r][c]=new Square(); 
+					tmpBoard[r][c]=new Square(); 
 				}
 				else if (tokens[c].equals(doubleLett)){
-					sBoard[r][c] = new Square(2,1); 
+					tmpBoard[r][c] = new Square(2,1); 
 				}
 				else if (tokens[c].equals(doubleWord)) {
-					sBoard[r][c] = new Square(1,2); 
+					tmpBoard[r][c] = new Square(1,2); 
 				}
 				else if (tokens[c].equals(tripleLett)) {
-					sBoard[r][c] = new Square(3,1); 
+					tmpBoard[r][c] = new Square(3,1); 
 				}
 				else if (tokens[c].equals(tripleWord)) {
-					sBoard[r][c] = new Square(1,3); 
+					tmpBoard[r][c] = new Square(1,3); 
 				}
 				else {
 					throw new IOException("Scrabble layout file has improper format at (" + r + "," + c + ")"); 
@@ -53,6 +119,9 @@ public class ScrabbleBoard implements Cloneable{
 			++r; 
 		}
 		assert(r == ROWS); //Demand text file has 15 rows like a scrabble board!
+
+		return tmpBoard;
+
 
 	}
 
@@ -286,14 +355,14 @@ public class ScrabbleBoard implements Cloneable{
 
 		StringBuffer sb = new StringBuffer(); 
 		//sb.append("                       1 1 1 1 1 " + NL); 
-		//sb.append("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 " + NL); 
-		sb.append("   ");
+		sb.append("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 " + NL); 
+		//sb.append("   ");
 		//Put circled numbers on top
-		for (int i = 0; i < 15; i++) {
+		/*for (int i = 0; i < 15; i++) {
 			sb.append((char)(0x2460 + i));
 			sb.append(" "); 
-		}
-		sb.append(NL); 
+		}*/
+		//sb.append(NL); 
 
 		sb.append("  " + topLeft); 
 		for (int i = 0; i < 29; i++) {
@@ -302,7 +371,8 @@ public class ScrabbleBoard implements Cloneable{
 		sb.append(topRight + NL); 
 
 		for (int i = 0; i < ROWS; i++) {
-			sb.append((char)(0x2460+i)); 
+		//	sb.append((char)(0x2460+i)); 
+			sb.append(i%10);
 			sb.append(" " + vertBorder);
 
 			for (int j = 0; j < COLS; j++) {

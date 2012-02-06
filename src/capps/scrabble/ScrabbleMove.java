@@ -1,7 +1,9 @@
 package capps.scrabble; 
 
-import static capps.scrabble.ScrabbleConstants.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static capps.scrabble.ScrabbleConstants.*;
 
 public class ScrabbleMove {
 
@@ -20,6 +22,39 @@ public class ScrabbleMove {
 		dir = d; 
 	}
 
+	public ScrabbleMove(String acmString) throws BadStateException{
+		String[] tokens = acmString.split(" \t"); 
+		if (!tokens[0].toUpperCase().equals("SCRBL_MOVE:")) {
+			throw new BadStateException("Move string doesn't start with 'scrbl_move:'"
+						+ NL + "\tInput was: '" + acmString + "'");
+		}
+
+		Pattern used = Pattern.compile("^\\s*([A-Za-z\\*]+)");
+		Matcher m = used.matcher(acmString); 
+		if (!m.lookingAt()) {
+			throw new BadStateException("Tiles used not found at start of move string." 
+					+"Move string: '" + acmString + "'"); 
+		}
+
+		this.tilesUsed = m.group(1).toUpperCase(); 
+
+		Pattern theRest = Pattern.compile(
+				"\\(\\s*([0-9]+)\\s*," //Row 
+			   +"\\s*([0-9]+)\\s*," //Col
+			   +"\\s*([a-zA-Z]+)\\s*," //Play
+			   +"\\s*((?:EAST)|(?:SOUTH)\\)"); //EAST or SOUTH
+
+		m = theRest.matcher(acmString); 
+		if (!m.lookingAt()) {
+			throw new BadStateException("Invlid move string: '" + acmString + "'"); 
+		}
+
+		this.row = Integer.parseInt(m.group(1)); 
+		this.col = Integer.parseInt(m.group(2)); 
+		this.play = m.group(3); 
+		this.dir = m.group(4).equals("E") ? DIR.E : DIR.S; 
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(); 
@@ -28,6 +63,12 @@ public class ScrabbleMove {
 		sb.append("\tWord=\"" + play + "\", dir=" + dir.toString()); 
 		sb.append("\n\tTiles used=\"" + tilesUsed + "\""); 
 		return sb.toString(); 
+	}
+
+	public String toAcmString() {
+
+		return ("scrbl_move: " + "(" + row + ", " + col +", " + play + ", " + dir.toString() + ")"); 
+		
 	}
 
 	public static boolean isValidMove(ScrabbleMove m) {
