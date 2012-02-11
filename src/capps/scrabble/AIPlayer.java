@@ -90,16 +90,17 @@ public class AIPlayer {
 
 	public MoveScore getBestFirstMove(ScrabbleBoard sb, Square[][] b) {
 		
-		assert (rack.toString().length() == 7); 
+		//assert (rack.toString().length() == 7); 
 
 		final int center = 7;
 		ScrabbleMove bestMoveSoFar=null; 
 		int bestScoreSoFar=0; 
+        int rackSize = rack.size(); 
 
 		//Just try vertical since the board is symmetric rotated 90 degrees
 		for (int r = center - 6; r <= center; r++) {
 			int MIN_LEN = center - r + 1; 
-			for (int l = MIN_LEN; l <= 7; l++) {
+			for (int l = MIN_LEN; l <= rackSize; l++) {
 				ArrayList<String> substrings = rack.getSubstringsOfRack(l); 
 				for (String sub: substrings) {
 					ArrayList<String> matches = dict.getAnagrams(sub); 

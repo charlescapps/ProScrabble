@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class ScrabbleDict implements java.io.Serializable {
 	private static final long serialVersionUID=0xffffffff;
 
-	private static final int HASH_SIZE = 1 << 26; //26 letters in English language!
+	private static final int HASH_SIZE = 1 << 20; //26 letters in English language, but take mod 2^20 to reduce no. of buckets.!
 	private final ArrayList<String> lexiDict; 
 	private final WordBucket[] hashDict;
 	private final int NUM_WORDS; 
@@ -109,7 +109,7 @@ public class ScrabbleDict implements java.io.Serializable {
 			hashVal |= bit; 
 		}
 
-		return hashVal; 
+		return hashVal % HASH_SIZE; 
 	}
 
 	public void addToDict(String s) {

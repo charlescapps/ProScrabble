@@ -32,6 +32,10 @@ public class Rack {
 		assert(numWild <=2); 
 	}
 
+    public int size() {
+        return tiles.length(); 
+    }
+
 	@Override
 	public String toString() {
 		return tiles; 

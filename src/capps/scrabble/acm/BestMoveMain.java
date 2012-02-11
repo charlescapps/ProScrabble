@@ -40,7 +40,7 @@ public class BestMoveMain {
 
         readInState(args); 
 
-        o.println("************TEST BOARD************"); 
+        o.println("*************TEST BOARD************"); 
         o.println(sBoard); 
 
         MoveScore bestMove = ai.getBestMove(sBoard); 
@@ -53,7 +53,7 @@ public class BestMoveMain {
 
         sBoard.makeMove(bestMove.move); 
 
-        o.println("********BOARD AFTER MOVE**********");
+        o.println("*********BOARD AFTER MOVE**********");
         o.println(sBoard); 
 
 	}
