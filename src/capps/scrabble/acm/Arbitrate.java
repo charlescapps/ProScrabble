@@ -50,7 +50,7 @@ public class Arbitrate {
             System.exit(1); 
         }
 		
-		o.println("TEST FILE: " + args[2]); 
+		o.println("\nTESTING YOUR MOVE FOR TEST FILE: \"" + args[2] + "\""); 
 
 		try {
 			readInState(args);
@@ -100,27 +100,28 @@ public class Arbitrate {
 			sBoard.forceMove(noobMove); 
 
 			o.println(); 
-			o.println("****************AFTER YOUR INVALID MOVE********************"); 
+			o.println("*******AFTER YOUR INVALID MOVE*******"); 
 			o.println(sBoard); 
 
 			System.exit(1); 
 		}
 
+		MoveScore best = ai.getBestMove(sBoard); 
         int noobScore = sBoard.makeMove(noobMove); 
 
-        o.println("*****************BOARD STATE AFTER MOVE****************");
+        o.println("*******BOARD STATE AFTER MOVE*******");
         o.println(); 
         o.println(sBoard); 
 
 		o.println("Congrats! You played a valid move!"); 
 		o.println("YOUR SCORE = " + noobScore); 
 
-		MoveScore best = ai.getBestMove(sBoard); 
-
 		o.println(); 
 
 		if (noobScore < best.score) {
 			o.println(":-( Your score is less than the optimal score of " + best.score + "."); 
+            o.println("The best word was \"" + best.move.play + "\""); 
+            o.println("Try again!"); 
 		}
 		else if (noobScore == best.score) {
 			o.println("Good job! You got the optimal score for this board!"); 

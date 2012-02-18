@@ -1,6 +1,8 @@
 package capps.scrabble; 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -9,7 +11,9 @@ import static capps.scrabble.ScrabbleConstants.*;
 public class PlayScrabble {
 	private static enum MENU_CHOICE 
 		{PLAY_OPPONENT_MOVE, MANUAL_MOVE, GET_BEST_MOVE, GIVE_TILES, 
-			REMOVE_TILES, FORCE_MOVE, UNDO, DISPLAY, ADD_TO_DICT, END_GAME}; 
+			REMOVE_TILES, FORCE_MOVE, UNDO, DISPLAY, ADD_TO_DICT, END_GAME, 
+            SAVE_BOARD, LOAD_BOARD
+        }; 
 
 	private AIPlayer ai; 
 	private ScrabbleBoard sb; 
@@ -85,6 +89,9 @@ public class PlayScrabble {
 					case END_GAME: 
 						endGame(); 
 						break; 
+                    case SAVE_BOARD:
+                        saveBoard(); 
+                        break; 
 				}
 			}
 			catch (IOException e) {
@@ -301,6 +308,25 @@ public class PlayScrabble {
 		o.println(); 
 	}
 
+    private void saveBoard() throws IOException {
+        
+		o.print("Enter file name>"); 
+		String s = in.readLine(); 
+		o.println(); 
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(s)); 
+
+        String boardState = sb.toFile(); 
+
+        bw.write(SCRBL_RACK + ": " + ai.getRack() + NL); 
+
+        bw.write(boardState); 
+
+        bw.close(); 
+
+        
+    }
+
 	private static ScrabbleMove inputMove() throws IOException{
 		int r,c; 
 		String play, tilesUsed, s; 
@@ -362,10 +388,14 @@ public class PlayScrabble {
 		o.println("\t8) Display board"); 
 		o.println("\t9) Add word to dictionary");
 		o.println("\t10) End Game"); 
+		o.println("\tS)  Save Game to File"); 
 
 		o.print("ENTER OPTION>"); 
 		String choice = in.readLine(); 
 		o.println(); 
+
+        if (choice.equals("S") || choice.equals("s")) 
+            return MENU_CHOICE.SAVE_BOARD; 
 
 		int val; 
 

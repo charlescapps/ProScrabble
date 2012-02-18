@@ -44,11 +44,12 @@ public class BestMoveMain {
         o.println(sBoard); 
 
         MoveScore bestMove = ai.getBestMove(sBoard); 
+        int score = sBoard.computeScore(bestMove.move); 
 
 		o.println("BEST MOVE:"); 
         o.println(bestMove.move.toAcmString()); 
 		o.println(); 
-        o.println("SCORE: " + bestMove.score); 
+        o.println("SCORE: " + bestMove.score + ", BOARD SAYS: " + score); 
         o.println(); 
 
         sBoard.makeMove(bestMove.move); 

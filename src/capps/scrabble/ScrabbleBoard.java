@@ -408,6 +408,23 @@ public class ScrabbleBoard implements Cloneable{
 		return sb.toString(); 
 	}
 
+    public String toFile() {
+        StringBuffer sb = new StringBuffer(); 
+        sb.append(SCRBL_BOARD + ":" + NL); 
+
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                sb.append(sBoard[i][j].getLetter()); 
+                if (sBoard[i][j].isBlank())
+                    sb.append("*"); 
+                else sb.append(" "); 
+            }
+            sb.append(NL); 
+        }
+        return sb.toString(); 
+    }
+
+
 	public static String toString(Square[][] board) {
 		StringBuffer sb = new StringBuffer(); 
 

@@ -6,12 +6,12 @@ public class ScrabbleConstants {
 
 	public static enum DIR {S, E}; 
 
-	public static final char BLANK = ' ';
-	public static final char EMPTY = '_'; 
-	public static final char WILDCARD = '*'; 
-	public static final String sBLANK = " "; 
-	public static final String sEMPTY = "_"; 
-	public static final String sWILDCARD = "*"; 
+	public static final char BLANK = ' '; //delimits squares in layout file / board state file
+	public static final char EMPTY = '_'; //Character on board for an empty square
+	public static final char WILDCARD = '*'; //Character in rack for wildcard (blank tile)
+	public static final String sBLANK = " "; //delimits squares in layout file / board state file
+	public static final String sEMPTY = "_"; //String version of char on board for empty square
+	public static final String sWILDCARD = "*"; //String version of blank tile in rack
 
 	public static final String SCRBL_MOVE = "SCRBL_MOVE"; 
 	public static final String SCRBL_RACK = "SCRBL_RACK"; 
