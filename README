@@ -1,0 +1,15 @@
+ACM Challenge: 
+
+Your mission, should you choose to accept it, is to create the awesomest, 
+fastest, most badass Scrabble AI. 
+    Your first task is to create a program that takes a scrabble test file from
+standard in and then outputs a scrabble move to standard out. 
+
+You can find example test files from the testcases/ subfolder. 
+    Your output should look like this:
+
+scrbl_move: (tiles_used) (ROW, COL, word_played, EAST | SOUTH)
+
+See examples/ for more examples. 
+
+

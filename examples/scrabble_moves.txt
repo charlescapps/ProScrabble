@@ -1,0 +1,17 @@
+Here is an example Scrabble Move Format (TM) 
+    "scrbl_move:" must be on the start of the line. Then the tiles used from
+your rack are in parentheses e.g. "(EQRY)". Then you give the row, col your 
+play starts on (This is where the main word you formed *starts* not where you 
+place your first tile!) Last there is the direction of play, EAST or SOUTH. 
+
+MOVE FORMAT: 
+scrbl_move: (tiles_used) (ROW, COL, word_played, EAST |SOUTH)
+
+EXAMPLE 1: 
+scrbl_move: (EQRY) (4, 4, EQUERRY, EAST)
+
+EXAMPLE 2: 
+scrbl_move: (AES) (1, 4, AXES, SOUTH)
+
+EXAMPLE 3: 
+scrbl_move: (BAST) (7, 7, BASTION, EAST)
