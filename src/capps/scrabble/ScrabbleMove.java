@@ -8,7 +8,7 @@ import static capps.scrabble.ScrabbleConstants.*;
 public class ScrabbleMove {
 
 	final public static String ACM_FORMAT 
-		= "scrbl_move: (tiles_used) (ROW, COL, word_played, EAST | SOUTH)";
+		= "SCRBL_MOVE: (tiles_used) (ROW, COL, word_played, EAST | SOUTH)";
 	final public int row; 
 	final public int col; 
 	final public String play; 
@@ -77,7 +77,7 @@ public class ScrabbleMove {
 
 	public String toAcmString() {
 
-		return ("scrbl_move: " + "(" + this.tilesUsed + ") " + "(" + row + ", " + col +", " + play + ", " + (dir == DIR.E ? "EAST" : "SOUTH") + ")"); 
+		return (SCRBL_MOVE + ": " + "(" + this.tilesUsed + ") " + "(" + row + ", " + col +", " + play + ", " + (dir == DIR.E ? "EAST" : "SOUTH") + ")"); 
 		
 	}
 

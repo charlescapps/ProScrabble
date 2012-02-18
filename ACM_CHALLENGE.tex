@@ -1,0 +1,123 @@
+\documentclass{article}
+
+\usepackage{fullpage, graphicx, amssymb, amsmath, amsfonts, wrapfig, subfigure, listings, color, hyperref}
+\usepackage[usenames,dvipsnames]{xcolor}
+
+
+\usepackage[ocr-a]{ocr}
+\usepackage[T1]{fontenc}
+
+
+
+\newcommand{\nl}{\vspace{\baselineskip}}
+\newcommand{\tab}{\hspace*{2em}}
+\newcommand{\bo}[1]{\textbf{#1}}
+\newcommand{\tm}[1]{\textrm{#1}}
+\newcommand{\imp}{\longrightarrow}
+\newcommand{\f}{\forall}
+\newcommand{\e}{\exists}
+\newcommand{\AND}{\wedge}
+\newcommand{\OR}{\vee}
+
+%Some settings to make lstlistings pretty
+\lstset{ 
+language=C,                % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,   		% adds a frame around the code
+tabsize=2,  		% sets default tabsize to 2 spaces
+captionpos=b,   		% sets the caption-position to bottom
+breaklines=true,    	% sets automatic line breaking
+breakatwhitespace=false,    % sets if automatic breaks should only happen at whitespace
+%escapeinside={\%}{)}          % if you want to add a comment within your code
+}
+
+\begin{document}
+\ttfamily
+
+\begin{center}
+\Huge{ACM Challenge: Scrabble AI}\\
+
+\end{center}
+\large
+Your mission, should you choose to accept it, is to create a Scrabble AI that can find the best Scrabble move for any Scrabble board and tiles in hand. Your program will read in a Scrabble board and tiles in hand from stdin, then output the best Scrabble move to stdout. 
+
+(If you are awesome, you will then create an AI that takes into account rack balancing and other strategies.)
+
+\section{Board Format}
+
+Sample test files are available at \verb=somedir/testcases/test*.txt=
+
+They look like this: 
+
+\begin{verbatim}
+SCRBL_RACK: XARTH**
+SCRBL_BOARD:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ O*_ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ U P _ _ _ _ _ _ 
+_ _ _ _ _ _ _ T O _ _ _ _ _ _ 
+_ _ _ _ R _ _ W E B _ _ _ _ _ 
+_ _ _ _ E _ _ A T E _ _ _ _ _ 
+G _ _ _ Q _ _ R _ E*_ _ _ _ _ 
+U _ S Q U A*W S _ S _ _ _ _ _ 
+L A W _ I*_ _ _ _ W _ _ _ _ _ 
+_ H A _ T _ _ _ _ A _ _ _ _ _ 
+_ _ R _ A _ _ _ _ X _ _ _ _ _ 
+_ _ T*_ L*_ _ _ _ _ _ _ _ _ _ 
+_ _ H _ _ _ _ _ _ _ _ _ _ _ _ 
+T E S S E R A _ _ _ _ _ _ _ _ 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+\end{verbatim} 
+
+A `*' in the rack string indicates you have a blank tile. A `*' on the board following a letter indicates that letter was played as a blank tile (and so it counts for 0 points.) For example, in this board someone played BEESWAX going south and used a blank tile for an `E'. 
+
+\section{Move Format}
+After reading in this file, your AI will then output a scrabble move. It can output extra junk so long as a move in this format appears on some line. 
+
+Move Format: ``\verb=SCRBL_MOVE: (tiles_used) (ROW, COL, word_played, EAST | SOUTH)="
+
+Example: ``\verb=SCRBL_MOVE: (EQURRY) (4, 4, EQUERRY, EAST)="
+\\
+
+A Scrabble Board has 15 rows and 15 columns, so ROW = 0,1,...,14, and COL = 0,1,...,14. The ROW and COL indicate where the word formed begins, NOT necessarily where you placed your first tile. For example, if ``new" is on the board and you play ``renew" then ROW and COL are where the `r' in ``renew" appears. 
+
+In rare cases this can appear ambiguous, for example: 
+
+\begin{verbatim}
+SCRBL_RACK: PUMMEL*
+SCRBL_BOARD:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ H A M _ _ _ _ _
+_ _ _ _ _ _ _ A _ A _ _ _ _ _
+_ _ _ _ _ _ _ M A _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+\end{verbatim}
+
+You can play a `P' to form MAP twice. Which `M' is the start of your play? Don't worry about it, either one will work. 
+
+\section{Dictionary}
+You will use the Official Scrabble Player's 2nd Edition Dictionary. It is available as a plaintext file at \verb=somedir/dict/OSPDv2.txt=
+
+\section{Letter and Word Bonuses}
+Your AI must, of course, calculate points with the bonuses taken into account. The layout of a Scrabble board can be easily googled, or you can just parse the following text: 
+
+
+\end{document} 

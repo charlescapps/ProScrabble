@@ -95,7 +95,7 @@ public class ScrabbleBoard implements Cloneable{
 		String line; 
 		int r=0, c=0; 
 		while ( (line = layoutFile.readLine()) != null) {
-			String[] tokens = line.split(sBLANK); 	
+			String[] tokens = line.split(sBLANK + "+"); 	
 			assert(tokens.length==COLS);//Demand our text file has the proper number of cols =)
 			for (c = 0; c < COLS; c++) {
 				if (tokens[c].equals(fileBlank)) {
