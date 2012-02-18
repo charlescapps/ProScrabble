@@ -1,5 +1,5 @@
 SCRBL_RACK: RWBLAH*
-scrbl_board:
+SCRBL_BOARD:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 _ _ _ _ _ _ _ O*_ _ _ _ _ _ _ 
 _ _ _ _ _ _ _ U P _ _ _ _ _ _ 

@@ -1,5 +1,5 @@
 SCRBL_RACK: XEUQLP*
-scrbl_board:
+SCRBL_BOARD:
 _ _ _ _ _ _ _ _ _ _ _ W _ _ _ 
 _ _ _ _ _ _ _ B*E Q U E S*T S 
 _ _ _ _ _ _ _ R _ _ _ _ _ _ A 

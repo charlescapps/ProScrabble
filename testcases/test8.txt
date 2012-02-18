@@ -1,5 +1,5 @@
 SCRBL_RACK: RTERTY*
-scrbl_board:
+SCRBL_BOARD:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 _ _ _ _ _ _ _ T W I*S T Y _ _ 

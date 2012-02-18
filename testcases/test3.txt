@@ -1,5 +1,5 @@
 SCRBL_RACK: USQR*WS
-scrbl_board:
+SCRBL_BOARD:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 _ _ _ _ _ _ _ _ _ _ _ _ _ S _ 
 _ _ _ _ _ _ _ _ C*O*Q U E T S 

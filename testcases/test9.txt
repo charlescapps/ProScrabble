@@ -1,5 +1,5 @@
 SCRBL_RACK: RUKAQX*
-scrbl_board:
+SCRBL_BOARD:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 _ _ _ _ _ _ _ C*_ _ _ _ _ _ _ 
 _ _ _ _ _ _ _ A _ _ _ _ _ _ _ 

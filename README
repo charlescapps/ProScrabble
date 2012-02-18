@@ -12,4 +12,10 @@ scrbl_move: (tiles_used) (ROW, COL, word_played, EAST | SOUTH)
 
 See examples/ for more examples. 
 
+You must use the Official Scrabble Player's 2nd Edition dictionary. It is in
+dict/OSPDv2.txt. 
+
+The layout for a Scrabble Board (where the double word / double letter / 
+triple word / triple letter bonuses are) can be easily found online. For 
+convenience, there's a text file at data/layout.txt with this layout. 
 
