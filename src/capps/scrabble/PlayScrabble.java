@@ -2,6 +2,7 @@ package capps.scrabble;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -92,6 +93,9 @@ public class PlayScrabble {
                     case SAVE_BOARD:
                         saveBoard(); 
                         break; 
+                    case LOAD_BOARD:
+                        loadBoard(); 
+                        break; 
 				}
 			}
 			catch (IOException e) {
@@ -99,6 +103,11 @@ public class PlayScrabble {
 				e.printStackTrace(); 
 				o.println(); 
 			}
+            catch (Exception e) {
+                o.println("Some exception happened. Returning to menu."); 
+                e.printStackTrace(); 
+                o.println(); 
+            }
 
 		} while (mc != MENU_CHOICE.END_GAME); 
 	}
@@ -323,8 +332,29 @@ public class PlayScrabble {
         bw.write(boardState); 
 
         bw.close(); 
+    }
 
+    private void loadBoard() throws Exception {
         
+		o.print("Enter file name>"); 
+		String s = in.readLine(); 
+		o.println(); 
+
+        BufferedReader br = new BufferedReader(new FileReader(s)); 
+
+		//Get the line with the rack 
+		String firstLine = br.readLine(); 
+		String[] tokens = firstLine.split(" ");
+		if (tokens.length < 2 || !tokens[0].toUpperCase().equals("SCRBL_RACK:"))
+			throw new BadStateException("First line must be like this:" + NL +
+					"RACK: <rack_tiles>"); 
+
+		String initRack = tokens[1]; 
+        ai = new AIPlayer(initRack, dict); 
+
+        br.readLine(); //throw out line with scrbl_board:
+
+        sb.initState(br); 
     }
 
 	private static ScrabbleMove inputMove() throws IOException{
@@ -332,8 +362,7 @@ public class PlayScrabble {
 		String play, tilesUsed, s; 
 		DIR d; 
 
-		try {
-			o.print("Enter move row>"); 
+		try { o.print("Enter move row>"); 
 			s = in.readLine(); 
 			r = Integer.parseInt(s); 
 
@@ -388,7 +417,8 @@ public class PlayScrabble {
 		o.println("\t8) Display board"); 
 		o.println("\t9) Add word to dictionary");
 		o.println("\t10) End Game"); 
-		o.println("\tS)  Save Game to File"); 
+		o.println("\tS) Save Game to File"); 
+		o.println("\tL) Load Game from File"); 
 
 		o.print("ENTER OPTION>"); 
 		String choice = in.readLine(); 
@@ -396,6 +426,9 @@ public class PlayScrabble {
 
         if (choice.equals("S") || choice.equals("s")) 
             return MENU_CHOICE.SAVE_BOARD; 
+
+        else if (choice.equals("L") || choice.equals("l"))
+            return MENU_CHOICE.LOAD_BOARD;
 
 		int val; 
 

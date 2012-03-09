@@ -19,7 +19,6 @@ public class ScrabbleBoard implements Cloneable{
 	private ScrabbleDict dict; 
 
 	public ScrabbleBoard(BufferedReader layoutFile, ScrabbleDict dict) throws IOException{
-
 		this.dict = dict; 
 		this.sBoard = initBoardLayout(layoutFile); 
 	}
@@ -30,7 +29,6 @@ public class ScrabbleBoard implements Cloneable{
 		this.dict = dict;
 		this.sBoard = initBoardLayout(layoutFile); 
 		initState(inputState); 
-
 	}
 
 	public boolean isEmptyBoard() {
@@ -43,7 +41,7 @@ public class ScrabbleBoard implements Cloneable{
 		return true;
 	}
 
-	private void initState(BufferedReader inputState) 
+	public void initState(BufferedReader inputState) 
 			throws BadStateException, IOException {
 
 		String line;

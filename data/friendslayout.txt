@@ -1,0 +1,15 @@
+B  B  B  TW B  B  TL B  TL B  B  TW B  B  B
+B  B  DL B  B  DW B  B  B  DW B  B  DL B  B
+B  DL B  B  DL B  B  B  B  B  DL B  B  DL B
+TW B  B  TL B  B  B  DW B  B  B  TL B  B  TW
+B  B  DL B  B  B  DL B  DL B  B  B  DL B  B
+B  DW B  B  B  TL B  B  B  TL B  B  B  DW B
+TL B  B  B  DL B  B  B  B  B  DL B  B  B  TL
+B  B  B  DW B  B  B  B  B  B  B  DW B  B  B
+TL B  B  B  DL B  B  B  B  B  DL B  B  B  TL
+B  DW B  B  B  TL B  B  B  TL B  B  B  DW B
+B  B  DL B  B  B  DL B  DL B  B  B  DL B  B
+TW B  B  TL B  B  B  DW B  B  B  TL B  B  TW
+B  DL B  B  DL B  B  B  B  B  DL B  B  DL B
+B  B  DL B  B  DW B  B  B  DW B  B  DL B  B
+B  B  B  TW B  B  TL B  TL B  B  TW B  B  B

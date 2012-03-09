@@ -1,0 +1,8 @@
+layout.txt contains the location of word scores on a scrabble board. 
+layoutfriends.txt is the layout for Words with Friends
+
+B = BLANK
+DW = Double word score
+DL = Double letter score
+TW = Triple word score
+TL = Triple letter score
