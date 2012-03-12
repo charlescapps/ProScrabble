@@ -13,7 +13,7 @@ public class PlayScrabble {
 	private static enum MENU_CHOICE 
 		{PLAY_OPPONENT_MOVE, MANUAL_MOVE, GET_BEST_MOVE, GIVE_TILES, 
 			REMOVE_TILES, FORCE_MOVE, UNDO, DISPLAY, ADD_TO_DICT, END_GAME, 
-            SAVE_BOARD, LOAD_BOARD
+            SAVE_BOARD, LOAD_BOARD, SET_CUSTOM_POINTS
         }; 
 
 	private AIPlayer ai; 
@@ -95,6 +95,9 @@ public class PlayScrabble {
                         break; 
                     case LOAD_BOARD:
                         loadBoard(); 
+                        break; 
+                    case SET_CUSTOM_POINTS:
+                        setCustomPoints(); 
                         break; 
 				}
 			}
@@ -335,7 +338,6 @@ public class PlayScrabble {
     }
 
     private void loadBoard() throws Exception {
-        
 		o.print("Enter file name>"); 
 		String s = in.readLine(); 
 		o.println(); 
@@ -355,6 +357,17 @@ public class PlayScrabble {
         br.readLine(); //throw out line with scrbl_board:
 
         sb.initState(br); 
+    }
+
+    private void setCustomPoints() throws Exception {
+		o.print("Enter file name>"); 
+		String s = in.readLine(); 
+		o.println(); 
+
+        BufferedReader br = new BufferedReader(new FileReader(s)); 
+
+        ScrabbleConstants.setCustomPointDistribution(br); 
+        o.println(ScrabbleConstants.printPointDistro()); 
     }
 
 	private static ScrabbleMove inputMove() throws IOException{
@@ -416,7 +429,8 @@ public class PlayScrabble {
 		o.println("\t7) Remove tiles"); 
 		o.println("\t8) Display board"); 
 		o.println("\t9) Add word to dictionary");
-		o.println("\t10) End Game"); 
+        o.println("\t10) Set custom letter points from file."); 
+		o.println("\t11) End Game"); 
 		o.println("\tS) Save Game to File"); 
 		o.println("\tL) Load Game from File"); 
 
@@ -460,7 +474,9 @@ public class PlayScrabble {
 				return MENU_CHOICE.DISPLAY; 
 			case 9:
 				return MENU_CHOICE.ADD_TO_DICT; 
-			case 10:
+            case 10:
+                return MENU_CHOICE.SET_CUSTOM_POINTS; 
+			case 11:
 				return MENU_CHOICE.END_GAME; 
 			default: 
 				o.println("Invalid choice. Displaying menu again."); 
