@@ -80,6 +80,8 @@ public class ScrabbleConstants {
             throw new ScrabbleException("Points file must have all 26 letters!"); 
         }
 
+        customPoints.put(' ', 0); 
+
         useCustomPoints = true; 
     }
 
