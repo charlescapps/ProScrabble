@@ -55,9 +55,9 @@ public class ScrabbleMove {
 		this.col = Integer.parseInt(m.group(2)); 
 		this.play = m.group(3).toUpperCase(); 
         String eOrS = m.group(4).toUpperCase(); 
-        if (eOrS.equals("S") || eOrS.equals("SOUTH"))
+        if (eOrS.toUpperCase().equals("S") || eOrS.toUpperCase().equals("SOUTH"))
             this.dir = DIR.S; 
-        else if (eOrS.equals("E") || eOrS.equals("EAST"))
+        else if (eOrS.toUpperCase().equals("E") || eOrS.toUpperCase().equals("EAST"))
             this.dir = DIR.E; 
 
         else throw new BadStateException("Invalid move string '" + acmString + "'\n" 

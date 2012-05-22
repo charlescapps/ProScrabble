@@ -192,23 +192,26 @@ public class PlayScrabble {
 		boolean areYouSure = false; 
 		ScrabbleMove manMove; 
 
-		do {
-			o.println("Enter a manual move:"); 
-			manMove = inputMove(); 
+        o.println("Enter a manual move:"); 
+        manMove = inputMove(); 
 
-			while (manMove == null || !sb.isValidMove(manMove)) {
-				o.println("Move isn't valid. Enter another move."); 
-				manMove = inputMove(); 
-			}
+        if (manMove == null || !sb.isValidMove(manMove)) {
+            o.println("Move isn't valid. Returning to menu."); 
+            return; 
+        }
 
-			o.println(manMove); 
-			o.print("Are you sure this is correct? (Y/N) "); 
-			String s = in.readLine(); 
-			o.println(); 
-			if (s.equals("Y") || s.equals("y"))
-				areYouSure = true;
+        o.println(manMove); 
+        o.print("Are you sure this is correct? (Y/N) "); 
+        String s = in.readLine(); 
+        o.println(); 
+        if (s.equals("Y") || s.equals("y"))
+            areYouSure = true;
 
-		} while (!areYouSure); 
+        if (!areYouSure) {
+            o.println("Returning to menu."); 
+            return; 
+        }
+
 
 		int score = sb.computeScore(manMove); 
 
