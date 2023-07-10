@@ -200,7 +200,7 @@ public class AIPlayer {
 						}
 					}
 				}
-				for (int r1 = r; r1 < wLen ;r1++) {
+				for (int r1 = r; ;r1++) {
 					if (r1 >= ROWS || b[r1][c].getLetter() == EMPTY)
 						break; 
 					searchedS[r1][c] = true; 
@@ -267,7 +267,7 @@ public class AIPlayer {
 
 							String grabTiles = rack.hasTiles(substr); 
 
-							ScrabbleMove tryMove = new ScrabbleMove(r-j,c,cand.toString(),grabTiles,DIR.E); 
+							ScrabbleMove tryMove = new ScrabbleMove(r,c-j,cand.toString(),grabTiles,DIR.E); 
 							if (sb.isValidMove(tryMove)) {
 								int score = sb.computeScore(tryMove);
 								if (bestMoveSoFar == null || bestScoreSoFar < score) {
